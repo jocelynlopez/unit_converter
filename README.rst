@@ -1,14 +1,16 @@
-# Generic Converter
+Generic Converter
+-----------------
 
 ![https://img.shields.io/docker/automated/negetem/python.svg](https://img.shields.io/docker/automated/negetem/python.svg)
 
-## Description
+Description
++++++++++++
 
 Packages for converting units values.
 
 
-## Contributing
-
+Contributing
+++++++++++++
 Please submit and comment on bug reports and feature requests.
 
 To submit a patch:
@@ -20,12 +22,12 @@ To submit a patch:
 5. Push to the branch (`git push origin my-new-feature`).
 6. Create a new Pull Request.
 
-## License
-
+License
++++++++
 This app is licensed under the MIT license.
 
-## Warranty
-
+Warranty
+++++++++
 This software is provided "as is" and without any express or
 implied warranties, including, without limitation, the implied
 warranties of merchantibility and fitness for a particular
