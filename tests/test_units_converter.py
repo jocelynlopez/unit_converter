@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-# coding=utf-8
+# -*- encoding=utf-8 -*-
 
 import unittest
-from units import UnitsConverter
+from generic_converter.units import UnitsConverter
 
 
 VALUE_TESTS_CASES = {
@@ -15,7 +15,7 @@ VALUE_TESTS_CASES = {
 class TestUnitsConverter(unittest.TestCase):
 
     def test_meters(self):
-
+        pass
 
 if __name__ == '__main__':
     unittest.main()

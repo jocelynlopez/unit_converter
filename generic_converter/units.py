@@ -1,29 +1,22 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import re
+
 from common import BaseConverter
 
-M = 'kg'
-T = 's'
-L = 'm'
-THETA = 'K'
-I = 'A'
-N = 'mol'
-J = 'cd'
 
-BASE_UNITS = {
-    'g': M * 1E-3,
-    's': T,
-    'm': L,
-    'K': THETA,
-    'A': I,
-    'mol': N,
-    'cd': J,
-}
+# Exceptions :
+# ------------
+class UnitDoesntExist(ValueError):
+    pass
 
-DERIVED_UNITS = {
-    'Hz', ('hertz')
-}
+
+class UnconsistentUnits(ValueError):
+    pass
+
+# Units classes :
+# ---------------
 
 
 class PrefixUnit(object):
@@ -68,42 +61,63 @@ class PrefixUnit(object):
 
 class Unit(object):
 
-    def __init__(self, symbol, name, M=0, T=0, L=0, THETA=0, I=0, N=0, J=0):
+    def __init__(self, symbol, name, L=0, M=0, T=0, I=0, THETA=0, N=0, J=0, coef=1., offset=0.):
         self.symbol = symbol
         self.name = name
+        self.coef = coef
+        self.offset = offset
 
         # Dimensionnal quantities
-        self.M = M
-        self.T = T
-        self.L = L
-        self.THETA = THETA
-        self.I = I
-        self.N = N
+        # -----------------------
+        self.L = L              # Length
+        self.M = M              # Mass
+        self.T = T              # Time
+        self.I = I              # Electric current
+        self.THETA = THETA      # Thermodynamic temperature
+        self.N = N              # Amount of substance
+        self.J = J              # Luminous intensity
 
-    def
+    def add_prefix(self, prefix):
+        self.coef *= prefix.factor
+
+    def is_same_dimension(self, other_unit):
+        return (self.L == other_unit.L &
+                self.M == other_unit.M &
+                self.T == other_unit.T &
+                self.I == other_unit.I &
+                self.THETA == other_unit.THETA &
+                self.N == other_unit.N &
+                self.J == other_unit.J)
+
+# Global variables:
+# -----------------
+
+# Basic SI units
+m = Unit('m', 'meter', L=1)
+g = Unit('g', 'gram', M=1, coef=1E-3)
+s = Unit('s', 'second', T=1)
+A = Unit('A', 'ampere', I=1)
+K = Unit('K', 'kelvin', THETA=1)
+mol = Unit('mol', 'mole', N=1)
+cd = Unit('cd', 'candela', J=1)
+
+# Derived SI units
+dC = Unit('°C', 'celsius', THETA=1, offset=273.15)
+
+# # Regex
+# VALUE_PATTERN = "[0-9]+.?[0-9]*"
+# UNIT_PATTERN = "[a-zA-Z]+"
+# UNIT_REGEX = re.compile("(%s) *(%s)" % (VALUE_PATTERN, UNIT_PATTERN))
+# # result = UNIT_REGEX.match('23.3 m').groups()
 
 
-m = Unit('m', 'meter', M=1)
-g = Unit('g', 'gram', M=1)
-m = Unit('m', 'meter', M=1)
-m = Unit('m', 'meter', M=1)
-m = Unit('m', 'meter', M=1)
-m = Unit('m', 'meter', M=1)
-m = Unit('m', 'meter', M=1)
-m = Unit('m', 'meter', M=1)
+class UnitsParser(object):
+
+    def __init__(unit):
+        pass
 
 
-VALUE_PATTERN = "[0-9]+.?[0-9]*"
-UNIT_PATTERN = "[a-zA-Z]+"
-UNIT_REGEX = re.compile("(%s) *(%s)" % (VALUE_PATTERN, UNIT_PATTERN))
-result = UNIT_REGEX.match('23.3 m').groups()
-
-
-class UnitDoesntExist(ValueError):
-    pass
-
-
-class UnitsConverter(BaseConverter):
+class BaseUnitsConverter(BaseConverter):
 
     def __init__(self, content, desired_unit, current_unit=None):
         self.content = content
@@ -111,16 +125,16 @@ class UnitsConverter(BaseConverter):
         self.desired_unit = desired_unit
 
     @staticmethod
-    def extract_base_unit(current_unit):
-        for unit in UNITS:
-            if unit in current_unit:
-                return unit
-        raise UnitDoesntExist("Unit '%s' doesn't exist !" % current_unit)
+    def convert_value_with_unit_object(value, desired_unit, current_unit, unit):
+        if not current_unit.is_same_dimension(desired_unit):
+            raise UnconsistentUnits("Units are not of the same dimension !")
+        delta_coef = desired_unit.coef / current_unit.coef
+        delta_offset = pass
 
-    @staticmethod
-    def convert_value(value, desired_unit, current_unit, unit):
 
-        coef = PREFIX_SI[prefix]
+desired_unit.offset = °C  273.15
+current_unit.offset = °K  0
 
-    @staticmethod
-    def convert_string(string)
+253.15°K - -> -20°C
+
+253.15 - offset

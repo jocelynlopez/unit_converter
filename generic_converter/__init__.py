@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- encoding=utf-8 -*-
+
 __title__ = 'generic_converter'
 __version__ = '0.0.1'
 __description__ = 'Simple converter for values ​​with units'
