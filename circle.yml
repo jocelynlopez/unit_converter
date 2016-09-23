@@ -1,6 +1,7 @@
 machine:
   python:
     version: 3.5.2
+    version: 3.4
 
 dependencies:
   override:
@@ -9,3 +10,4 @@ dependencies:
 test:
   override:
     - pytest
+    - tox
