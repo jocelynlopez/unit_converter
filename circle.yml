@@ -2,6 +2,10 @@ machine:
   python:
     version: 3.5.2
 
+dependencies:
+  override:
+    - pip install -r requirements_test.txt
+
 test:
   override:
     - pytest
