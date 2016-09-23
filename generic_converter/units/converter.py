@@ -67,6 +67,22 @@ def convert_from_string_to_Unit(prefix_as_string, unit_as_string):
 
 
 class SmartUnitsConverter(object):
+    """
+    Converter for value with an unit.
+
+    Limitations :
+    -------------
+        - only single units can be used (no composed unit like 'm/s')
+        - only basic and derived SI units are available
+
+    Examples :
+    ----------
+
+    >>> from generic_converter.units import SmartUnitsConverter
+    >>> converter = SmartUnitsConverter()
+    >>> converter.convert('2.78 dam', 'µm')
+    Decimal('2.78E+7')
+    """
 
     def convert(self, value, desired_unit, current_unit=None):
         if not isinstance(desired_unit, Unit):
@@ -98,3 +114,7 @@ class SmartUnitsConverter(object):
         ref_value = current_unit.offset + value * current_unit.coef
         desired_value = (-desired_unit.offset + ref_value) / desired_unit.coef
         return desired_value
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

@@ -8,6 +8,19 @@ Description
 
 Packages for converting units values.
 
+Basic usages
+++++++++++++
+
+```
+>>> from generic_converter.units import SmartUnitsConverter
+>>>
+>>> converter = SmartUnitsConverter()
+>>> converter.convert('2.78 dam', 'µm')
+>>> Decimal('2.78E+7')
+
+```
+
+Note: It is necessary to provide the value as a string. Indeed, the high precision of conversion (1E-27) is possible only with string, by using Decimal object in replacement of float object.
 
 Contributing
 ++++++++++++

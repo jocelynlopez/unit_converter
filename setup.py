@@ -99,5 +99,4 @@ setup(name=name,
       keywords=keywords,
       classifiers=classifiers,
       cmdclass={'test': PyTest},
-      tests_require=test_requirements,
-      )
+      tests_require=test_requirements)
