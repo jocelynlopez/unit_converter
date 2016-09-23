@@ -2,13 +2,14 @@
 # coding=utf-8
 
 import re
+from decimal import Decimal as D
 
 from .exceptions import UnConsistentUnitsError, UnitDoesntExistError, PrefixDoesntExistError
 from .units import Unit, PrefixUnit, UNITS, PREFIXES
 
 VALUE_PATTERN = "[0-9]+.?[0-9]*"
 UNIT_PATTERN = "[a-zA-Z]+"
-VALUE_WITH_UNIT_REGEX = re.compile("(%s) *(%s)" % (VALUE_PATTERN, UNIT_PATTERN))
+VALUE_WITH_UNIT_REGEX = re.compile("(%s) *(%s)?" % (VALUE_PATTERN, UNIT_PATTERN))
 # (value_as_string, unit_as_string) = STRING_VALUE_REGEX.match('23.3 m').groups()
 
 
@@ -78,15 +79,16 @@ class SmartUnitsConverter(object):
                 prefix_as_string, unit_as_string = extract_unit_from_basic_unit_and_prefix_as_string(
                     current_unit)
                 current_unit = convert_from_string_to_Unit(prefix_as_string, unit_as_string)
-        if not isinstance(value, float) and not isinstance(value, int):
+        if not isinstance(value, D):
             if isinstance(value, str):
                 value_as_string, unit_as_string = VALUE_WITH_UNIT_REGEX.match(value).groups()
                 if unit_as_string:
                     prefix_as_string, unit_as_string = extract_unit_from_basic_unit_and_prefix_as_string(
                         unit_as_string)
                     current_unit = convert_from_string_to_Unit(prefix_as_string, unit_as_string)
-                value = float(value_as_string)
-
+                value = D(value_as_string)
+            else:
+                raise TypeError("value argument need to be a 'decimal.Decimal' or string object !")
         return self.convert_value_with_unit_as_object(value, desired_unit, current_unit)
 
     @staticmethod

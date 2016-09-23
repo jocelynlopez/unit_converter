@@ -1,28 +1,30 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from decimal import Decimal as D
+
 PREFIXES = {
-    'y': {'factor': 1E-24, 'name': 'yocto'},
-    'z': {'factor': 1E-21, 'name': 'zepto'},
-    'a': {'factor': 1E-18, 'name': 'atto'},
-    'f': {'factor': 1E-15, 'name': 'femto'},
-    'p': {'factor': 1E-12, 'name': 'pico'},
-    'n': {'factor': 1E-9, 'name': 'nano'},
-    'µ': {'factor': 1E-6, 'name': 'micro'},
-    'm': {'factor': 1E-3, 'name': 'milli'},
-    'c': {'factor': 1E-2, 'name': 'centi'},
-    'd': {'factor': 1E-1, 'name': 'deci'},
-    '': {'factor': 1E0, 'name': ''},
-    'da': {'factor': 1E+1, 'name': 'deca'},
-    'h': {'factor': 1E+2, 'name': 'hecto'},
-    'k': {'factor': 1E+3, 'name': 'kilo'},
-    'M': {'factor': 1E+6, 'name': 'mega'},
-    'G': {'factor': 1E+9, 'name': 'giga'},
-    'T': {'factor': 1E+12, 'name': 'tera'},
-    'P': {'factor': 1E+15, 'name': 'peta'},
-    'E': {'factor': 1E+18, 'name': 'exa'},
-    'Z': {'factor': 1E+21, 'name': 'zetta'},
-    'Y': {'factor': 1E+24, 'name': 'yotta'},
+    'y': {'factor': D('1E-24'), 'name': 'yocto'},
+    'z': {'factor': D('1E-21'), 'name': 'zepto'},
+    'a': {'factor': D('1E-18'), 'name': 'atto'},
+    'f': {'factor': D('1E-15'), 'name': 'femto'},
+    'p': {'factor': D('1E-12'), 'name': 'pico'},
+    'n': {'factor': D('1E-9'), 'name': 'nano'},
+    'µ': {'factor': D('1E-6'), 'name': 'micro'},
+    'm': {'factor': D('1E-3'), 'name': 'milli'},
+    'c': {'factor': D('1E-2'), 'name': 'centi'},
+    'd': {'factor': D('1E-1'), 'name': 'deci'},
+    '': {'factor': D('1E0'), 'name': ''},
+    'da': {'factor': D('1E+1'), 'name': 'deca'},
+    'h': {'factor': D('1E+2'), 'name': 'hecto'},
+    'k': {'factor': D('1E+3'), 'name': 'kilo'},
+    'M': {'factor': D('1E+6'), 'name': 'mega'},
+    'G': {'factor': D('1E+9'), 'name': 'giga'},
+    'T': {'factor': D('1E+12'), 'name': 'tera'},
+    'P': {'factor': D('1E+15'), 'name': 'peta'},
+    'E': {'factor': D('1E+18'), 'name': 'exa'},
+    'Z': {'factor': D('1E+21'), 'name': 'zetta'},
+    'Y': {'factor': D('1E+24'), 'name': 'yotta'},
 }
 
 
@@ -36,10 +38,12 @@ class PrefixUnit(object):
         else:
             self.name = name
 
-        if not name:
+        if not factor:
             self.factor = PREFIXES[self.symbol]['factor']
+        elif isinstance(factor, D) or isinstance(factor, str):
+            self.factor = D(factor)
         else:
-            self.factor = factor
+            raise TypeError("factor need to be a 'string' or a 'decimal.Decimal' class")
 
     def __mul__(self, unit):
         if isinstance(unit, Unit):
@@ -61,7 +65,7 @@ class PrefixUnit(object):
 
 class Unit(object):
 
-    def __init__(self, symbol, name, L=0, M=0, T=0, I=0, THETA=0, N=0, J=0, coef=1., offset=0.):
+    def __init__(self, symbol, name, L=0, M=0, T=0, I=0, THETA=0, N=0, J=0, coef=D('1'), offset=D('0')):
         self.symbol = symbol
         self.name = name
         self.coef = coef
@@ -94,7 +98,7 @@ class Unit(object):
 # Basic SI units
 # --------------
 m = Unit('m', 'meter', L=1)
-g = Unit('g', 'gram', M=1, coef=1E-3)
+g = Unit('g', 'gram', M=1, coef=D('1E-3'))
 s = Unit('s', 'second', T=1)
 A = Unit('A', 'ampere', I=1)
 K = Unit('K', 'kelvin', THETA=1)
@@ -118,7 +122,7 @@ F = Unit('F', 'farad', M=-1, L=-2, T=4, I=2)
 T = Unit('T', 'tesla', M=1, T=-2, I=-1)
 Wb = Unit('Wb', 'weber', M=1, L=2, T=-2, I=-1)
 H = Unit('H', 'henry', M=1, L=2, T=-2, I=-2)
-degreesC = Unit('°C', 'celsius', THETA=1, offset=273.15)
+degreesC = Unit('°C', 'celsius', THETA=1, offset=D('273.15'))
 rad = Unit('rad', 'radian')
 # sr = Unit('sr', 'steradian')
 lm = Unit('lm', 'lumen', J=1)
@@ -131,7 +135,7 @@ kat = Unit('kat', 'katal', T=-1, N=1)
 # ---------------
 # Imperial system
 # ---------------
-degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=273.15 - 32 / 1.8, coef=1 / 1.8)
+degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D('273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
 
 
 UNITS = {
