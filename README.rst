@@ -1,7 +1,8 @@
 Generic Converter
 -----------------
 
-![https://img.shields.io/docker/automated/negetem/python.svg](https://img.shields.io/docker/automated/negetem/python.svg)
+.. image:: https://circleci.com/bb/negetem/generic_converter/tree/master.svg?style=svg
+    :target: https://circleci.com/bb/negetem/generic_converter/tree/master
 
 Description
 +++++++++++
