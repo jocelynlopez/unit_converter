@@ -1,7 +1,6 @@
 machine:
   python:
     version: 3.5.2
-    version: 3.4.5
 
 dependencies:
   override:
@@ -9,5 +8,6 @@ dependencies:
 
 test:
   override:
-    - pytest
-    - tox
+    - pytest --cov-report html:coverage_report --cov=generic_converter
+  post:
+    - cp -r coverage_report $CIRCLE_ARTIFACTS/.
