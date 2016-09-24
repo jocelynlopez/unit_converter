@@ -11,3 +11,9 @@ test:
     - pytest --cov-report html:coverage_report --cov=generic_converter
   post:
     - cp -r coverage_report $CIRCLE_ARTIFACTS/.
+
+deployment:
+  pypi:
+    branch: master
+    commands:
+      - sudo bash ./pypi-deploy.sh
