@@ -37,7 +37,8 @@ class BasicUnitConverter(object):
 
         # Convert current_unit in an Unit object if needed
         if current_unit is None:
-            current_unit = GlobalParser().get_units(value)
+            unit_as_string = GlobalParser().get_units(value)
+            current_unit = BasicUnitParser().get_unit(unit_as_string)
         elif isinstance(current_unit, str):
             current_unit = BasicUnitParser().get_unit(current_unit)
         elif not isinstance(current_unit, Unit):
@@ -69,6 +70,7 @@ class BasicUnitConverter(object):
 
 class SmartUnitsConverter(BasicUnitConverter):
     pass
+
 
 if __name__ == "__main__":
     import doctest

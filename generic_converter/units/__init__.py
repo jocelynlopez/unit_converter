@@ -8,7 +8,8 @@ from .units import *
 __all__ = [
     # Classes
     'SmartUnitsConverter',
-    # Base SI units
+
+    # Basic SI units
     'm',
     'g',
     's',
@@ -16,6 +17,30 @@ __all__ = [
     'K',
     'mol',
     'cd',
+
     # Derived SI units
+    'Hz',
+    'N',
+    'Pa',
+    'J',
+    'W',
+    'C',
+    'V',
+    'Ohm',
+    'S',
+    'F',
+    'T',
+    'Wb',
+    'H',
     'degreesC',
-    'degreesF']
+    'rad',
+    # 'sr': sr,
+    'lm',
+    'lx',
+    'Bq',
+    'Gy',
+    'Sv',
+    'kat',
+
+    # Imperial system
+    'degreesF', ]

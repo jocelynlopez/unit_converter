@@ -11,7 +11,8 @@ from .units import Unit, PrefixUnit, UNITS, PREFIXES
 class GlobalParser(object):
 
     VALUE_PATTERN = "[0-9]+.?[0-9]*"
-    UNIT_PATTERN = "[°µΩa-zA-Z/*^]+"
+    # UNIT_PATTERN = "[°µΩa-zA-Z/*^]+"
+    UNIT_PATTERN = ".*"
     VALUE_WITH_UNIT_REGEX = re.compile("(%s) *(%s)?" % (VALUE_PATTERN, UNIT_PATTERN))
 
     def __init__(self, **options):
@@ -23,10 +24,11 @@ class GlobalParser(object):
 
     def get_units(self, string):
         value_as_string, units_as_string = self.VALUE_WITH_UNIT_REGEX.match(string).groups()
-        if units_as_string:
-            return BasicUnitParser().get_unit(units_as_string)
-        else:
-            return None
+        return units_as_string
+        # if units_as_string:
+        #     return BasicUnitParser().get_unit(units_as_string)
+        # else:
+        #     return None
 
 
 class BasicUnitParser(object):
@@ -118,11 +120,9 @@ class ComposedUnitParser(object):
         for raw_basic_unit in composed_unit_as_string_without_div.split('*'):
             basic_unit = raw_basic_unit.split('^')
             if len(basic_unit) == 1:
-                prefix_as_string, unit_as_string = BasicUnitParser().basic_unit[0])
-                unit=convert_from_string_to_Unit(prefix_as_string, unit_as_string)
+                unit = BasicUnitParser().get_unit(basic_unit[0])
             elif len(basic_unit) == 2:
-                prefix_as_string, unit_as_string=...(basic_unit[0])
-                unit=convert_from_string_to_Unit(prefix_as_string, unit_as_string)
-                unit=unit**basic_unit[0]
+                unit = BasicUnitParser().get_unit(basic_unit[0])
+                unit = unit**basic_unit[0]
             else:
                 raise TypeError
