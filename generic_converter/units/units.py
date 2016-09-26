@@ -93,6 +93,40 @@ class Unit(object):
                 self.N == other_unit.N and
                 self.J == other_unit.J)
 
+    def __mul__(self, unit):
+        if isinstance(unit, Unit):
+            final_unit = Unit(symbol=self.symbol + '*' + unit.symbol,
+                              name=self.name + '*' + unit.name,
+                              L=self.L + unit.L,
+                              M=self.M + unit.M,
+                              T=self.T + unit.T,
+                              I=self.I + unit.I,
+                              THETA=self.THETA + unit.THETA,
+                              N=self.N + unit.N,
+                              J=self.J + unit.J,
+                              coef=self.coef * unit.coef,
+                              offset=self.offset + unit.offset)
+            return final_unit
+        else:
+            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
+
+    def __pow__(self, power):
+        if isinstance(power, int) or isinstance(power, float):
+            final_unit = Unit(symbol=self.symbol + '^' + power,
+                              name=self.name + '^' + power,
+                              L=self.L * power,
+                              M=self.M * power,
+                              T=self.T * power,
+                              I=self.I * power,
+                              THETA=self.THETA * power,
+                              N=self.N * power,
+                              J=self.J * power,
+                              coef=self.coef,
+                              offset=self.offset)
+            return final_unit
+        else:
+            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
+
 
 #---------------
 # Basic SI units
