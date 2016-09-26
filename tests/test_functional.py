@@ -18,16 +18,19 @@ TESTS_CASES = [
     ('52', '°C', D('52'), '°C'),
     ('1545', u.m, D('1.545'), 'km'),
     ('1.5', 'mm', D('1.5E3'), 'µm'),
+    ('1.5 mm', None, D('1.5E3'), 'µm'),
+    ('52 °C', None, D('52'), '°C'),
+    ('52 °C', None, D('125.6'), '°F'),
 ]
 
 TESTS_TOLERANCE_FALSE = [
     # (value, current_unit, expected_value, desired_unit)
-    ('1', 'm', D('1') + D('1E-27'), 'm'),        # Limite de la tolerance d'egalite
+    ('1', 'm', D('1') + D('1E-27'), 'm'),        # Limite fausse de la tolerance d'egalite
 ]
 
 TESTS_TOLERANCE_TRUE = [
     # (value, current_unit, expected_value, desired_unit)
-    ('1', 'm', D('1') + D('1E-28'), 'm'),        # Limite de la tolerance d'egalite
+    ('1', 'm', D('1') + D('1E-28'), 'm'),        # Limite vrai de la tolerance d'egalite
 ]
 
 

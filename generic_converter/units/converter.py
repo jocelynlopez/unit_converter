@@ -8,7 +8,7 @@ from .exceptions import UnConsistentUnitsError, UnitDoesntExistError, PrefixDoes
 from .units import Unit, PrefixUnit, UNITS, PREFIXES
 
 VALUE_PATTERN = "[0-9]+.?[0-9]*"
-UNIT_PATTERN = "[a-zA-Z]+"
+UNIT_PATTERN = "[°µΩa-zA-Z]+"
 VALUE_WITH_UNIT_REGEX = re.compile("(%s) *(%s)?" % (VALUE_PATTERN, UNIT_PATTERN))
 # (value_as_string, unit_as_string) = STRING_VALUE_REGEX.match('23.3 m').groups()
 
