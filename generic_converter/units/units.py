@@ -94,7 +94,7 @@ class Unit(object):
                 self.J == other_unit.J)
 
     def __mul__(self, unit):
-        if isinstance(unit, Unit):
+        try:
             final_unit = Unit(symbol=self.symbol + '*' + unit.symbol,
                               name=self.name + '*' + unit.name,
                               L=self.L + unit.L,
@@ -107,7 +107,7 @@ class Unit(object):
                               coef=self.coef * unit.coef,
                               offset=self.offset + unit.offset)
             return final_unit
-        else:
+        except AttributeError:
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
 
     def __pow__(self, power):
