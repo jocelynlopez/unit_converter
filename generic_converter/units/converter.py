@@ -6,7 +6,7 @@ from decimal import Decimal as D
 
 from .exceptions import UnConsistentUnitsError
 from .units import Unit, UnitPrefix, UNITS, PREFIXES
-from .parser import GlobalParser, BasicUnitParser
+from .parser import GlobalParser, BasicUnitParser, ComposedUnitParser
 
 
 class BasicUnitConverter(object):
@@ -69,8 +69,35 @@ class BasicUnitConverter(object):
 
 
 class SmartUnitsConverter(BasicUnitConverter):
-    pass
 
+    def convert(self, value, desired_unit, current_unit=None):
+
+        # Convert desired_unit in an Unit object if needed
+        if isinstance(desired_unit, str):
+            desired_unit = ComposedUnitParser().get_unit(desired_unit)
+        elif not isinstance(desired_unit, Unit):
+            raise TypeError("desired_unit argument need to be a 'units.Unit' or string object !")
+
+        # Convert current_unit in an Unit object if needed
+        if current_unit is None:
+            unit_as_string = GlobalParser().get_units(value)
+            current_unit = ComposedUnitParser().get_unit(unit_as_string)
+        elif isinstance(current_unit, str):
+            current_unit = ComposedUnitParser().get_unit(current_unit)
+        elif not isinstance(current_unit, Unit):
+            raise TypeError("current_unit argument need to be a 'units.Unit' or string object or None !")
+
+        # Convert value in a Decimal object
+        if isinstance(value, str):
+            value = GlobalParser().get_value(value)
+        elif not isinstance(value, D):
+            raise TypeError("value argument need to be a 'decimal.Decimal' or string object !")
+
+        # Check dimension from current and desired units
+        if not current_unit.is_same_dimension(desired_unit):
+            raise UnConsistentUnitsError(desired_unit.name, current_unit.name)
+
+        return self.convert_to_desired_unit(value, desired_unit, current_unit)
 
 if __name__ == "__main__":
     import doctest

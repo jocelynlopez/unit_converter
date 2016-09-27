@@ -74,6 +74,13 @@ class Test_Unit(unittest.TestCase):
     def test___pow__(self):
         assert UNITS['m'] ** 3 == Unit('m^3', 'meter^3', L=3)
 
+    def test___pow___coef(self):
+        mm = Unit('mm', 'millimeter', L=1, coef=D('1E-3'))
+        assert mm ** 3 == Unit('mm^3', 'millimeter^3', L=3, coef=D('1E-9'))
+
+    # def test___pow___offset(self):
+    #     assert UNITS['mm'] ** 3 == Unit('mm^3', 'millimeter^3', L=3, coef=D('1E-9'))
+
     def test___pow__raise_TypeError(self):
         with pytest.raises(TypeError):
             UNITS['m'] ** '3'

@@ -7,7 +7,7 @@ import unittest
 import pytest
 
 from ..units import Unit, UNITS, PREFIXES
-from ..parser import GlobalParser, BasicUnitParser
+from ..parser import GlobalParser, BasicUnitParser, ComposedUnitParser
 from ..exceptions import UnitDoesntExistError
 
 
@@ -28,6 +28,19 @@ class Test_GlobalParser(unittest.TestCase):
     def test_GlobalParser_get_units(self):
         string_input = '56.292 kg*m/s^2'
         units_expected = 'kg*m/s^2'
+        assert units_expected == GlobalParser().get_units(string_input)
+
+    def test_GlobalParser_get_units_without_space(self):
+        string_input = '56.292kg*m/s^2'
+        units_expected = 'kg*m/s^2'
+        assert units_expected == GlobalParser().get_units(string_input)
+
+    def test_GlobalParser_get_units_BUG_REPORT_1(self):
+        """Test for correction of the current bug :
+        GlobalParser().get_units('178mm^2') == ('178m', 'm^2')
+        """
+        string_input = '178mm^2'
+        units_expected = 'mm^2'
         assert units_expected == GlobalParser().get_units(string_input)
 
 
@@ -108,3 +121,25 @@ class Test_BasicUnitParser(unittest.TestCase):
         string_input = 'mm'
         unit_expected = Unit('mm', 'millimeter', L=1, coef=D('1E-3'))
         assert unit_expected == BasicUnitParser().get_unit(string_input)
+
+
+# ------------------------
+# Test ComposedUnitParser class
+# ------------------------
+class Test_ComposedUnitParser(unittest.TestCase):
+
+    # Test get_units method
+    # ----------------------------
+    def test__get_units(self):
+        composed_unit_as_string = 'kg*m*s^-2'
+        kg = PREFIXES['k'] * UNITS['g']
+        m = UNITS['m']
+        spowerminus2 = Unit('s^-2.0', 'second^-2.0', T=-2)
+        assert ComposedUnitParser()._get_units(composed_unit_as_string) == [kg, m, spowerminus2]
+
+    # Test get_unit method
+    # ----------------------------
+    def test_get_unit(self):
+        composed_unit_as_string = 'kg*m*s^-2'
+        unit_expected = Unit('kg*m*s^-2.0', 'kilogram*meter*second^-2.0', M=1, L=1, T=-2)
+        assert ComposedUnitParser().get_unit(composed_unit_as_string) == unit_expected

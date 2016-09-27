@@ -105,6 +105,10 @@ class Unit(object):
 
     def __pow__(self, power):
         if isinstance(power, int) or isinstance(power, float):
+            if self.offset:
+                new_offset = self.offset**D(power)
+            else:
+                new_offset = self.offset
             final_unit = self.__class__(symbol=self.symbol + '^' + str(power),
                                         name=self.name + '^' + str(power),
                                         L=self.L * power,
@@ -114,8 +118,8 @@ class Unit(object):
                                         THETA=self.THETA * power,
                                         N=self.N * power,
                                         J=self.J * power,
-                                        coef=self.coef,
-                                        offset=self.offset)
+                                        coef=self.coef**D(power),
+                                        offset=new_offset)
             return final_unit
         else:
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(power)))

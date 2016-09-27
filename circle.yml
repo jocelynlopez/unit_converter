@@ -10,9 +10,9 @@ dependencies:
 
 test:
   override:
-    - pytest --cov-report html:coverage_report --cov=generic_converter
+    - pytest
   post:
-    - cp -r coverage_report $CIRCLE_ARTIFACTS/.
+    - cp -r coverage_html_report $CIRCLE_ARTIFACTS/.
 
 deployment:
   pypi:

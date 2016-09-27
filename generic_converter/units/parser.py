@@ -10,8 +10,7 @@ from .units import Unit, UnitPrefix, UNITS, PREFIXES
 
 class GlobalParser(object):
 
-    VALUE_PATTERN = "[0-9]+.?[0-9]*"
-    # UNIT_PATTERN = "[°µΩa-zA-Z/*^]+"
+    VALUE_PATTERN = "[0-9.]*"
     UNIT_PATTERN = ".*"
     VALUE_WITH_UNIT_REGEX = re.compile("(%s) *(%s)?" % (VALUE_PATTERN, UNIT_PATTERN))
 
@@ -99,21 +98,31 @@ class BasicUnitParser(object):
         return prefix * unit
 
 
-# class ComposedUnitParser(object):
+class ComposedUnitParser(object):
 
-#     def __init__(self, **options):
-#         self.options = options
+    def __init__(self, **options):
+        self.options = options
 
-#     def build_unit_from_composed_units(composed_unit_as_string):
-#         # First we needed to transform / operator into *^-1
-#         composed_unit_as_string_without_div = composed_unit_as_string
+    def _get_units(self, composed_unit_as_string):
+        # First we needed to transform / operator into *^-1
+        composed_unit_as_string_without_div = composed_unit_as_string
 
-#         for raw_basic_unit in composed_unit_as_string_without_div.split('*'):
-#             basic_unit = raw_basic_unit.split('^')
-#             if len(basic_unit) == 1:
-#                 unit = BasicUnitParser().get_unit(basic_unit[0])
-#             elif len(basic_unit) == 2:
-#                 unit = BasicUnitParser().get_unit(basic_unit[0])
-#                 unit = unit**basic_unit[0]
-#             else:
-#                 raise TypeError
+        units = []
+        for raw_basic_unit in composed_unit_as_string_without_div.split('*'):
+            basic_unit = raw_basic_unit.split('^')
+            if len(basic_unit) == 1:
+                units.append(BasicUnitParser().get_unit(basic_unit[0]))
+            elif len(basic_unit) == 2:
+                unit = BasicUnitParser().get_unit(basic_unit[0])
+                power = float(basic_unit[1])
+                units.append(unit**power)
+            else:
+                raise TypeError('sucessive ^ operator are not implemented')
+        return units
+
+    def get_unit(self, composed_unit_as_string):
+        units = self._get_units(composed_unit_as_string)
+        result_unit = units[0]
+        for unit in units[1:]:
+            result_unit *= unit
+        return result_unit

@@ -2,7 +2,7 @@
 # -*- encoding=utf-8 -*-
 
 __title__ = 'generic_converter'
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 __description__ = 'Simple converter for values ​​with units'
 __build__ = None
 __author__ = 'Jocelyn LOPEZ'
