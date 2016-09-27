@@ -24,15 +24,3 @@ class UnitDoesntExistError(ValueError):
 
     def __str__(self):
         return repr(self.value)
-
-
-class PrefixDoesntExistError(ValueError):
-
-    def __init__(self, *args):
-        if args:
-            self.value = "Prefix %s doesn't exist !" % str(args)
-        else:
-            self.value = "Prefix doesn't exist !"
-
-    def __str__(self):
-        return repr(self.value)

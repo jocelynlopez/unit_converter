@@ -4,8 +4,8 @@
 import re
 from decimal import Decimal as D
 
-from .exceptions import UnConsistentUnitsError, UnitDoesntExistError, PrefixDoesntExistError
-from .units import Unit, PrefixUnit, UNITS, PREFIXES
+from .exceptions import UnConsistentUnitsError
+from .units import Unit, UnitPrefix, UNITS, PREFIXES
 from .parser import GlobalParser, BasicUnitParser
 
 

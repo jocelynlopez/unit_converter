@@ -3,32 +3,8 @@
 
 from decimal import Decimal as D
 
-# PREFIXES = {
-#     'y': {'factor': D('1E-24'), 'name': 'yocto'},
-#     'z': {'factor': D('1E-21'), 'name': 'zepto'},
-#     'a': {'factor': D('1E-18'), 'name': 'atto'},
-#     'f': {'factor': D('1E-15'), 'name': 'femto'},
-#     'p': {'factor': D('1E-12'), 'name': 'pico'},
-#     'n': {'factor': D('1E-9'), 'name': 'nano'},
-#     'µ': {'factor': D('1E-6'), 'name': 'micro'},
-#     'm': {'factor': D('1E-3'), 'name': 'milli'},
-#     'c': {'factor': D('1E-2'), 'name': 'centi'},
-#     'd': {'factor': D('1E-1'), 'name': 'deci'},
-#     '': {'factor': D('1E0'), 'name': ''},
-#     'da': {'factor': D('1E+1'), 'name': 'deca'},
-#     'h': {'factor': D('1E+2'), 'name': 'hecto'},
-#     'k': {'factor': D('1E+3'), 'name': 'kilo'},
-#     'M': {'factor': D('1E+6'), 'name': 'mega'},
-#     'G': {'factor': D('1E+9'), 'name': 'giga'},
-#     'T': {'factor': D('1E+12'), 'name': 'tera'},
-#     'P': {'factor': D('1E+15'), 'name': 'peta'},
-#     'E': {'factor': D('1E+18'), 'name': 'exa'},
-#     'Z': {'factor': D('1E+21'), 'name': 'zetta'},
-#     'Y': {'factor': D('1E+24'), 'name': 'yotta'},
-# }
 
-
-class PrefixUnit(object):
+class UnitPrefix(object):
 
     def __init__(self, symbol, name, factor):
         self.symbol = symbol
@@ -41,17 +17,11 @@ class PrefixUnit(object):
         else:
             raise TypeError("factor need to be a 'string' or a 'decimal.Decimal' class")
 
-        # if not name:
-        #     self.name = PREFIXES[self.symbol]['name']
-        # else:
-        #     self.name = name
+    def __repr__(self):
+        return "UnitPrefix(symbol='%s', name='%s', factor='%s')" % (self.symbol, self.name, self.factor)
 
-        # if not factor:
-        #     self.factor = PREFIXES[self.symbol]['factor']
-        # elif isinstance(factor, D) or isinstance(factor, str):
-        #     self.factor = D(factor)
-        # else:
-        #     raise TypeError("factor need to be a 'string' or a 'decimal.Decimal' class")
+    def is_same_factor(self, other_prefix):
+        return self.factor == other_prefix.factor
 
     def __eq__(self, other_prefix):
         return (self.symbol == other_prefix.symbol and
@@ -94,8 +64,11 @@ class Unit(object):
         self.N = N              # Amount of substance
         self.J = J              # Luminous intensity
 
-    def add_prefix(self, prefix):
-        self.coef *= prefix.factor
+    def __repr__(self):
+        args = "symbol='%s', name='%s', L='%s', M='%s', " % (self.symbol, self.name, self.L, self.M)
+        args += "T='%s', I='%s', THETA='%s', N='%s', J='%s'" % (self.T, self.I, self.THETA, self.N, self.J)
+        args += ", coef='%s', offset='%s'" % (self.coef, self.offset)
+        return "UnitPrefix(%s)" % args
 
     def is_same_dimension(self, other_unit):
         return (self.L == other_unit.L and
@@ -115,68 +88,68 @@ class Unit(object):
 
     def __mul__(self, unit):
         try:
-            final_unit = Unit(symbol=self.symbol + '*' + unit.symbol,
-                              name=self.name + '*' + unit.name,
-                              L=self.L + unit.L,
-                              M=self.M + unit.M,
-                              T=self.T + unit.T,
-                              I=self.I + unit.I,
-                              THETA=self.THETA + unit.THETA,
-                              N=self.N + unit.N,
-                              J=self.J + unit.J,
-                              coef=self.coef * unit.coef,
-                              offset=self.offset + unit.offset)
+            final_unit = self.__class__(symbol=self.symbol + '*' + unit.symbol,
+                                        name=self.name + '*' + unit.name,
+                                        L=self.L + unit.L,
+                                        M=self.M + unit.M,
+                                        T=self.T + unit.T,
+                                        I=self.I + unit.I,
+                                        THETA=self.THETA + unit.THETA,
+                                        N=self.N + unit.N,
+                                        J=self.J + unit.J,
+                                        coef=self.coef * unit.coef,
+                                        offset=self.offset + unit.offset)
             return final_unit
         except AttributeError:
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
 
     def __pow__(self, power):
         if isinstance(power, int) or isinstance(power, float):
-            final_unit = Unit(symbol=self.symbol + '^' + power,
-                              name=self.name + '^' + power,
-                              L=self.L * power,
-                              M=self.M * power,
-                              T=self.T * power,
-                              I=self.I * power,
-                              THETA=self.THETA * power,
-                              N=self.N * power,
-                              J=self.J * power,
-                              coef=self.coef,
-                              offset=self.offset)
+            final_unit = self.__class__(symbol=self.symbol + '^' + str(power),
+                                        name=self.name + '^' + str(power),
+                                        L=self.L * power,
+                                        M=self.M * power,
+                                        T=self.T * power,
+                                        I=self.I * power,
+                                        THETA=self.THETA * power,
+                                        N=self.N * power,
+                                        J=self.J * power,
+                                        coef=self.coef,
+                                        offset=self.offset)
             return final_unit
         else:
-            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
+            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(power)))
 
 
-#-----------
+# ----------
 # Prefix SI
 # ----------
 PREFIXES = {
-    'y': PrefixUnit(symbol='y', name='yocto', factor=D('1E-24')),
-    'z': PrefixUnit(symbol='z', name='zepto', factor=D('1E-21')),
-    'a': PrefixUnit(symbol='a', name='atto', factor=D('1E-18')),
-    'f': PrefixUnit(symbol='f', name='femto', factor=D('1E-15')),
-    'p': PrefixUnit(symbol='p', name='pico', factor=D('1E-12')),
-    'n': PrefixUnit(symbol='n', name='nano', factor=D('1E-9')),
-    'µ': PrefixUnit(symbol='µ', name='micro', factor=D('1E-6')),
-    'm': PrefixUnit(symbol='m', name='milli', factor=D('1E-3')),
-    'c': PrefixUnit(symbol='c', name='centi', factor=D('1E-2')),
-    'd': PrefixUnit(symbol='d', name='deci', factor=D('1E-1')),
-    '': PrefixUnit(symbol='', name='', factor=D('1E0')),
-    'da': PrefixUnit(symbol='da', name='deca', factor=D('1E+1')),
-    'h': PrefixUnit(symbol='h', name='hecto', factor=D('1E+2')),
-    'k': PrefixUnit(symbol='k', name='kilo', factor=D('1E+3')),
-    'M': PrefixUnit(symbol='M', name='mega', factor=D('1E+6')),
-    'G': PrefixUnit(symbol='G', name='giga', factor=D('1E+9')),
-    'T': PrefixUnit(symbol='T', name='tera', factor=D('1E+12')),
-    'P': PrefixUnit(symbol='P', name='peta', factor=D('1E+15')),
-    'E': PrefixUnit(symbol='E', name='exa', factor=D('1E+18')),
-    'Z': PrefixUnit(symbol='Z', name='zetta', factor=D('1E+21')),
-    'Y': PrefixUnit(symbol='Y', name='yotta', factor=D('1E+24')),
+    'y': UnitPrefix(symbol='y', name='yocto', factor=D('1E-24')),
+    'z': UnitPrefix(symbol='z', name='zepto', factor=D('1E-21')),
+    'a': UnitPrefix(symbol='a', name='atto', factor=D('1E-18')),
+    'f': UnitPrefix(symbol='f', name='femto', factor=D('1E-15')),
+    'p': UnitPrefix(symbol='p', name='pico', factor=D('1E-12')),
+    'n': UnitPrefix(symbol='n', name='nano', factor=D('1E-9')),
+    'µ': UnitPrefix(symbol='µ', name='micro', factor=D('1E-6')),
+    'm': UnitPrefix(symbol='m', name='milli', factor=D('1E-3')),
+    'c': UnitPrefix(symbol='c', name='centi', factor=D('1E-2')),
+    'd': UnitPrefix(symbol='d', name='deci', factor=D('1E-1')),
+    '': UnitPrefix(symbol='', name='', factor=D('1E0')),
+    'da': UnitPrefix(symbol='da', name='deca', factor=D('1E+1')),
+    'h': UnitPrefix(symbol='h', name='hecto', factor=D('1E+2')),
+    'k': UnitPrefix(symbol='k', name='kilo', factor=D('1E+3')),
+    'M': UnitPrefix(symbol='M', name='mega', factor=D('1E+6')),
+    'G': UnitPrefix(symbol='G', name='giga', factor=D('1E+9')),
+    'T': UnitPrefix(symbol='T', name='tera', factor=D('1E+12')),
+    'P': UnitPrefix(symbol='P', name='peta', factor=D('1E+15')),
+    'E': UnitPrefix(symbol='E', name='exa', factor=D('1E+18')),
+    'Z': UnitPrefix(symbol='Z', name='zetta', factor=D('1E+21')),
+    'Y': UnitPrefix(symbol='Y', name='yotta', factor=D('1E+24')),
 }
 
 
-#----------------
+# ---------------
 # Basic SI units
 # ---------------
 m = Unit('m', 'meter', L=1)

@@ -4,8 +4,8 @@
 import re
 from decimal import Decimal as D
 
-from .exceptions import UnConsistentUnitsError, UnitDoesntExistError, PrefixDoesntExistError
-from .units import Unit, PrefixUnit, UNITS, PREFIXES
+from .exceptions import UnConsistentUnitsError, UnitDoesntExistError
+from .units import Unit, UnitPrefix, UNITS, PREFIXES
 
 
 class GlobalParser(object):
@@ -25,10 +25,6 @@ class GlobalParser(object):
     def get_units(self, string):
         value_as_string, units_as_string = self.VALUE_WITH_UNIT_REGEX.match(string).groups()
         return units_as_string
-        # if units_as_string:
-        #     return BasicUnitParser().get_unit(units_as_string)
-        # else:
-        #     return None
 
 
 class BasicUnitParser(object):
@@ -41,7 +37,7 @@ class BasicUnitParser(object):
 
         first_letter = string[0]
         # Case with a prefix
-        if first_letter in PREFIXES.keys() and not first_letter in ('m', 'T', 'd'):
+        if first_letter in PREFIXES.keys() and first_letter not in ('m', 'T', 'd'):
             unit_as_string = string[1:]
 
         #   da prefix (two letters prefix)
@@ -73,7 +69,7 @@ class BasicUnitParser(object):
 
         first_letter = string[0]
         # Case with a prefix
-        if first_letter in PREFIXES.keys() and not first_letter in ('m', 'T', 'd'):
+        if first_letter in PREFIXES.keys() and first_letter not in ('m', 'T', 'd'):
             prefix_as_string = first_letter
 
         #   da prefix (two letters prefix)
@@ -95,10 +91,7 @@ class BasicUnitParser(object):
         else:
             prefix_as_string = ''
 
-        try:
-            return PREFIXES[prefix_as_string]
-        except KeyError:
-            raise PrefixDoesntExistError(prefix_as_string)
+        return PREFIXES[prefix_as_string]
 
     def get_unit(self, string):
         prefix = self.get_prefix(string)
@@ -106,21 +99,21 @@ class BasicUnitParser(object):
         return prefix * unit
 
 
-class ComposedUnitParser(object):
+# class ComposedUnitParser(object):
 
-    def __init__(self, **options):
-        self.options = options
+#     def __init__(self, **options):
+#         self.options = options
 
-    def build_unit_from_composed_units(composed_unit_as_string):
-        # First we needed to transform / operator into *^-1
-        composed_unit_as_string_without_div = composed_unit_as_string
+#     def build_unit_from_composed_units(composed_unit_as_string):
+#         # First we needed to transform / operator into *^-1
+#         composed_unit_as_string_without_div = composed_unit_as_string
 
-        for raw_basic_unit in composed_unit_as_string_without_div.split('*'):
-            basic_unit = raw_basic_unit.split('^')
-            if len(basic_unit) == 1:
-                unit = BasicUnitParser().get_unit(basic_unit[0])
-            elif len(basic_unit) == 2:
-                unit = BasicUnitParser().get_unit(basic_unit[0])
-                unit = unit**basic_unit[0]
-            else:
-                raise TypeError
+#         for raw_basic_unit in composed_unit_as_string_without_div.split('*'):
+#             basic_unit = raw_basic_unit.split('^')
+#             if len(basic_unit) == 1:
+#                 unit = BasicUnitParser().get_unit(basic_unit[0])
+#             elif len(basic_unit) == 2:
+#                 unit = BasicUnitParser().get_unit(basic_unit[0])
+#                 unit = unit**basic_unit[0]
+#             else:
+#                 raise TypeError

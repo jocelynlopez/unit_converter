@@ -3,105 +3,77 @@
 
 from decimal import Decimal as D
 
+import unittest
 import pytest
 
-from generic_converter.units.units import Unit, PrefixUnit, UNITS, PREFIXES
-from generic_converter.units.parser import GlobalParser, BasicUnitParser
-
-
-# ------------------------
-# Test GlobalParser class
-# ------------------------
-def test_GlobalParser_get_value():
-    string_input = '56.292 kg*m/s^2'
-    value_expected = '56.292'
-    assert D(value_expected) == GlobalParser().get_value(string_input)
-
-
-def test_GlobalParser_get_units():
-    string_input = '56.292 kg*m/s^2'
-    units_expected = 'kg*m/s^2'
-    assert units_expected == GlobalParser().get_units(string_input)
+from ..units import UnitPrefix, PREFIXES, Unit, UNITS
+from ..exceptions import UnConsistentUnitsError
+from ..converter import BasicUnitConverter
 
 
 # ---------------------------
 # Test BasicUnitParser class
 # ---------------------------
+class Test_UnitPrefix(unittest.TestCase):
 
-# Test get_default_unit method
-# ----------------------------
-def test_BasicUnitParser_get_default_unit():
-    string_input = 'aN'
-    unit_expected = UNITS['N']
-    assert unit_expected == BasicUnitParser().get_default_unit(string_input)
+    # -----------------------------
+    # Test __init__ method
+    # -----------------------------
+    def test___init__factor_as_int(self):
+        with pytest.raises(TypeError):
+            UnitPrefix('mp', 'my_prefix', 1)
 
+    def test___init__factor_as_float(self):
+        with pytest.raises(TypeError):
+            UnitPrefix('mp', 'my_prefix', 1.0)
 
-def test_BasicUnitParser_get_default_unit_d_prefix():
-    string_input = 'dm'
-    unit_expected = UNITS['m']
-    assert unit_expected == BasicUnitParser().get_default_unit(string_input)
+    def test___init__factor_as_D(self):
+        assert D('1') == UnitPrefix('mp', 'my_prefix', D('1.0')).factor
 
+    def test___init__factor_as_string(self):
+        assert D('1') == UnitPrefix('mp', 'my_prefix', '1.0').factor
 
-def test_BasicUnitParser_get_default_unit_da_prefix():
-    string_input = 'daN'
-    unit_expected = UNITS['N']
-    assert unit_expected == BasicUnitParser().get_default_unit(string_input)
+    # -----------------------------
+    # Test is_same_factor method
+    # -----------------------------
+    def test_is_same_factor(self):
+        compared_prefix = UnitPrefix('mp2', 'my_prefix2', D('02.4500000'))
+        assert UnitPrefix('mp', 'my_prefix', '2.45').is_same_factor(compared_prefix)
 
+    # -----------------------------
+    # Test __mult__ method
+    # -----------------------------
+    def test___mult__(self):
+        expected_unit = Unit('µm', 'micrometer', L=1, coef=D('1E-6'))
+        assert UnitPrefix('µ', 'micro', D('1.0E-6')) * UNITS['m'] == expected_unit
 
-def test_BasicUnitParser_get_default_unit_m_prefix():
-    string_input = 'mm'
-    unit_expected = UNITS['m']
-    assert unit_expected == BasicUnitParser().get_default_unit(string_input)
-
-    string_input = 'm'
-    unit_expected = UNITS['m']
-    assert unit_expected == BasicUnitParser().get_default_unit(string_input)
-
-
-def test_BasicUnitParser_get_default_unit_T_prefix():
-    string_input = 'TN'
-    unit_expected = UNITS['N']
-    assert unit_expected == BasicUnitParser().get_default_unit(string_input)
-
-
-# Test get_prefix method
-# -----------------------
-def test_BasicUnitParser_get_prefix():
-    string_input = 'aN'
-    prefix_expected = PREFIXES['a']
-    assert prefix_expected == BasicUnitParser().get_prefix(string_input)
+    def test___mult__raise_TypeError(self):
+        with pytest.raises(TypeError):
+            UnitPrefix('µ', 'micro', D('1.0E-6')) * False
 
 
-def test_BasicUnitParser_get_prefix_d_prefix():
-    string_input = 'dm'
-    prefix_expected = PREFIXES['d']
-    assert prefix_expected == BasicUnitParser().get_prefix(string_input)
+# ---------------------------
+# Test Unit class
+# ---------------------------
+class Test_Unit(unittest.TestCase):
 
+    # -----------------------------
+    # Test __mult__ method
+    # -----------------------------
+    def test___mult__(self):
+        assert UNITS['N'] * UNITS['m'] == Unit('N*m', 'newton*meter', M=1, L=2, T=-2)
+        assert UNITS['°C'] * UNITS['m'] == Unit('°C*m', 'celsius*meter', L=1, THETA=1, offset=D('273.15'))
 
-def test_BasicUnitParser_get_prefix_da_prefix():
-    string_input = 'daN'
-    prefix_expected = PREFIXES['da']
-    assert prefix_expected == BasicUnitParser().get_prefix(string_input)
+    def test___mult__raise_TypeError(self):
+        with pytest.raises(TypeError):
+            UNITS['°C'] * False
 
+    # -----------------------------
+    # Test __pow__ method
+    # -----------------------------
+    def test___pow__(self):
+        assert UNITS['m'] ** 3 == Unit('m^3', 'meter^3', L=3)
 
-def test_BasicUnitParser_get_prefix_m_prefix():
-    string_input = 'mm'
-    prefix_expected = PREFIXES['m']
-    assert prefix_expected == BasicUnitParser().get_prefix(string_input)
-
-    string_input = 'm'
-    prefix_expected = PREFIXES['']
-    assert prefix_expected == BasicUnitParser().get_prefix(string_input)
-
-
-def test_BasicUnitParser_get_prefix_T_prefix():
-    string_input = 'TN'
-    prefix_expected = PREFIXES['T']
-    assert prefix_expected == BasicUnitParser().get_prefix(string_input)
-# -----------------------
-
-
-def test_BasicUnitParser_get_unit():
-    string_input = 'mm'
-    unit_expected = Unit('mm', 'millimeter', L=1, coef=D('1E-3'))
-    assert unit_expected == BasicUnitParser().get_unit(string_input)
+    def test___pow__raise_TypeError(self):
+        with pytest.raises(TypeError):
+            UNITS['m'] ** '3'
