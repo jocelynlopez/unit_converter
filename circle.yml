@@ -18,4 +18,4 @@ deployment:
   pypi:
     branch: master
     commands:
-      - sudo bash ./pypi-deploy.sh
+      - sudo bash ./pypi-deploy.sh $REPONAME

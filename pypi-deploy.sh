@@ -10,8 +10,8 @@ echo "password:"${PYPI_PASSWORD} >> ~/.pypirc
 
 chmod 600 .pypirc
 
-version=$(python3 -c "from ${REPONAME} import __version__;print(__version__)")
-curl -f -s -S -k -X GET -I https://pypi.python.org/packages/source/d/${REPONAME}/${REPONAME}-$version.tar.gz
+version=$(python3 -c "from ${1} import __version__;print(__version__)")
+curl -f -s -S -k -X GET -I https://pypi.python.org/packages/source/d/${1}/${1}-$version.tar.gz
 
 if [[ $? -eq 0 ]]
 then
