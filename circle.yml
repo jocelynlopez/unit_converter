@@ -18,4 +18,5 @@ deployment:
   pypi:
     branch: master
     commands:
-      - sudo bash ./pypi-deploy.sh $REPONAME
+      - sed -e "s/<PYPI_USER>/$PYPI_USER/" -e "s/<PYPI_PASSWORD>/$PYPI_PASSWORD/"< .pypirc.template > ~/.pypirc
+      - sudo python setup.py sdist upload -r pypi
