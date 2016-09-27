@@ -7,8 +7,7 @@ echo " " >> ~/.pypirc
 echo "[pypi]" >> ~/.pypirc
 echo "username:"${PYPI_USER} >> ~/.pypirc
 echo "password:"${PYPI_PASSWORD} >> ~/.pypirc
-
-chmod 600 .pypirc
+chmod 600 ~/.pypirc
 
 version=$(python3 -c "from ${1} import __version__;print(__version__)")
 curl -f -s -S -k -X GET -I https://pypi.python.org/packages/source/d/${1}/${1}-$version.tar.gz

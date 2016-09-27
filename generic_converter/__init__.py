@@ -2,8 +2,8 @@
 # -*- encoding=utf-8 -*-
 
 __title__ = 'generic_converter'
-__version__ = '0.1.0'
-__description__ = 'Simple converter for values ​​with units'
+__version__ = '0.1.4'
+__description__ = 'Package for converting some generic object. Currently, parsing quantities as string with or without units.'
 __build__ = None
 __author__ = 'Jocelyn LOPEZ'
 __author_email__ = 'jocelyn.lopez.pro@gmail.com'
