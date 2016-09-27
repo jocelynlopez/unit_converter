@@ -3,47 +3,60 @@
 
 from decimal import Decimal as D
 
-PREFIXES = {
-    'y': {'factor': D('1E-24'), 'name': 'yocto'},
-    'z': {'factor': D('1E-21'), 'name': 'zepto'},
-    'a': {'factor': D('1E-18'), 'name': 'atto'},
-    'f': {'factor': D('1E-15'), 'name': 'femto'},
-    'p': {'factor': D('1E-12'), 'name': 'pico'},
-    'n': {'factor': D('1E-9'), 'name': 'nano'},
-    'µ': {'factor': D('1E-6'), 'name': 'micro'},
-    'm': {'factor': D('1E-3'), 'name': 'milli'},
-    'c': {'factor': D('1E-2'), 'name': 'centi'},
-    'd': {'factor': D('1E-1'), 'name': 'deci'},
-    '': {'factor': D('1E0'), 'name': ''},
-    'da': {'factor': D('1E+1'), 'name': 'deca'},
-    'h': {'factor': D('1E+2'), 'name': 'hecto'},
-    'k': {'factor': D('1E+3'), 'name': 'kilo'},
-    'M': {'factor': D('1E+6'), 'name': 'mega'},
-    'G': {'factor': D('1E+9'), 'name': 'giga'},
-    'T': {'factor': D('1E+12'), 'name': 'tera'},
-    'P': {'factor': D('1E+15'), 'name': 'peta'},
-    'E': {'factor': D('1E+18'), 'name': 'exa'},
-    'Z': {'factor': D('1E+21'), 'name': 'zetta'},
-    'Y': {'factor': D('1E+24'), 'name': 'yotta'},
-}
+# PREFIXES = {
+#     'y': {'factor': D('1E-24'), 'name': 'yocto'},
+#     'z': {'factor': D('1E-21'), 'name': 'zepto'},
+#     'a': {'factor': D('1E-18'), 'name': 'atto'},
+#     'f': {'factor': D('1E-15'), 'name': 'femto'},
+#     'p': {'factor': D('1E-12'), 'name': 'pico'},
+#     'n': {'factor': D('1E-9'), 'name': 'nano'},
+#     'µ': {'factor': D('1E-6'), 'name': 'micro'},
+#     'm': {'factor': D('1E-3'), 'name': 'milli'},
+#     'c': {'factor': D('1E-2'), 'name': 'centi'},
+#     'd': {'factor': D('1E-1'), 'name': 'deci'},
+#     '': {'factor': D('1E0'), 'name': ''},
+#     'da': {'factor': D('1E+1'), 'name': 'deca'},
+#     'h': {'factor': D('1E+2'), 'name': 'hecto'},
+#     'k': {'factor': D('1E+3'), 'name': 'kilo'},
+#     'M': {'factor': D('1E+6'), 'name': 'mega'},
+#     'G': {'factor': D('1E+9'), 'name': 'giga'},
+#     'T': {'factor': D('1E+12'), 'name': 'tera'},
+#     'P': {'factor': D('1E+15'), 'name': 'peta'},
+#     'E': {'factor': D('1E+18'), 'name': 'exa'},
+#     'Z': {'factor': D('1E+21'), 'name': 'zetta'},
+#     'Y': {'factor': D('1E+24'), 'name': 'yotta'},
+# }
 
 
 class PrefixUnit(object):
 
-    def __init__(self, symbol, name=None, factor=None):
+    def __init__(self, symbol, name, factor):
         self.symbol = symbol
+        self.name = name
 
-        if not name:
-            self.name = PREFIXES[self.symbol]['name']
-        else:
-            self.name = name
-
-        if not factor:
-            self.factor = PREFIXES[self.symbol]['factor']
-        elif isinstance(factor, D) or isinstance(factor, str):
+        if isinstance(factor, str):
             self.factor = D(factor)
+        elif isinstance(factor, D):
+            self.factor = factor
         else:
             raise TypeError("factor need to be a 'string' or a 'decimal.Decimal' class")
+
+        # if not name:
+        #     self.name = PREFIXES[self.symbol]['name']
+        # else:
+        #     self.name = name
+
+        # if not factor:
+        #     self.factor = PREFIXES[self.symbol]['factor']
+        # elif isinstance(factor, D) or isinstance(factor, str):
+        #     self.factor = D(factor)
+        # else:
+        #     raise TypeError("factor need to be a 'string' or a 'decimal.Decimal' class")
+
+    def __eq__(self, other_prefix):
+        return (self.symbol == other_prefix.symbol and
+                self.name == other_prefix.name and
+                self.factor == other_prefix.factor)
 
     def __mul__(self, unit):
         if isinstance(unit, Unit):
@@ -93,6 +106,13 @@ class Unit(object):
                 self.N == other_unit.N and
                 self.J == other_unit.J)
 
+    def __eq__(self, other_unit):
+        return (self.is_same_dimension(other_unit) and
+                self.symbol == other_unit.symbol and
+                self.name == other_unit.name and
+                self.coef == other_unit.coef and
+                self.offset == other_unit.offset)
+
     def __mul__(self, unit):
         try:
             final_unit = Unit(symbol=self.symbol + '*' + unit.symbol,
@@ -128,9 +148,37 @@ class Unit(object):
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
 
 
-#---------------
+#-----------
+# Prefix SI
+# ----------
+PREFIXES = {
+    'y': PrefixUnit(symbol='y', name='yocto', factor=D('1E-24')),
+    'z': PrefixUnit(symbol='z', name='zepto', factor=D('1E-21')),
+    'a': PrefixUnit(symbol='a', name='atto', factor=D('1E-18')),
+    'f': PrefixUnit(symbol='f', name='femto', factor=D('1E-15')),
+    'p': PrefixUnit(symbol='p', name='pico', factor=D('1E-12')),
+    'n': PrefixUnit(symbol='n', name='nano', factor=D('1E-9')),
+    'µ': PrefixUnit(symbol='µ', name='micro', factor=D('1E-6')),
+    'm': PrefixUnit(symbol='m', name='milli', factor=D('1E-3')),
+    'c': PrefixUnit(symbol='c', name='centi', factor=D('1E-2')),
+    'd': PrefixUnit(symbol='d', name='deci', factor=D('1E-1')),
+    '': PrefixUnit(symbol='', name='', factor=D('1E0')),
+    'da': PrefixUnit(symbol='da', name='deca', factor=D('1E+1')),
+    'h': PrefixUnit(symbol='h', name='hecto', factor=D('1E+2')),
+    'k': PrefixUnit(symbol='k', name='kilo', factor=D('1E+3')),
+    'M': PrefixUnit(symbol='M', name='mega', factor=D('1E+6')),
+    'G': PrefixUnit(symbol='G', name='giga', factor=D('1E+9')),
+    'T': PrefixUnit(symbol='T', name='tera', factor=D('1E+12')),
+    'P': PrefixUnit(symbol='P', name='peta', factor=D('1E+15')),
+    'E': PrefixUnit(symbol='E', name='exa', factor=D('1E+18')),
+    'Z': PrefixUnit(symbol='Z', name='zetta', factor=D('1E+21')),
+    'Y': PrefixUnit(symbol='Y', name='yotta', factor=D('1E+24')),
+}
+
+
+#----------------
 # Basic SI units
-# --------------
+# ---------------
 m = Unit('m', 'meter', L=1)
 g = Unit('g', 'gram', M=1, coef=D('1E-3'))
 s = Unit('s', 'second', T=1)
@@ -140,9 +188,9 @@ mol = Unit('mol', 'mole', N=1)
 cd = Unit('cd', 'candela', J=1)
 
 
-# ----------------
+# -----------------
 # Derived SI units
-# ----------------
+# -----------------
 Hz = Unit('Hz', 'hertz', T=-1)
 N = Unit('N', 'newton', M=1, L=1, T=-2)
 Pa = Unit('Pa', 'pascal', M=1, L=-1, T=-2)
@@ -166,9 +214,9 @@ Gy = Unit('Gy', 'gray', L=2, T=-2)
 Sv = Unit('Sv', 'sievert', L=2, T=-2)
 kat = Unit('kat', 'katal', T=-1, N=1)
 
-# ---------------
+# ----------------
 # Imperial system
-# ---------------
+# ----------------
 degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D('273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
 
 

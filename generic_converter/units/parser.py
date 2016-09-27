@@ -96,9 +96,7 @@ class BasicUnitParser(object):
             prefix_as_string = ''
 
         try:
-            factor = PREFIXES[prefix_as_string]['factor']
-            name = PREFIXES[prefix_as_string]['name']
-            return PrefixUnit(prefix_as_string, name, factor)
+            return PREFIXES[prefix_as_string]
         except KeyError:
             raise PrefixDoesntExistError(prefix_as_string)
 
