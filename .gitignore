@@ -1,5 +1,6 @@
 .cache
+*.pyc
 .coverage.*
-.venv
+venv
 coverage_html_report
 __pycache__
