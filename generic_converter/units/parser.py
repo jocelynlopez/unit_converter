@@ -4,25 +4,28 @@
 import re
 from decimal import Decimal as D
 
-from .exceptions import UnConsistentUnitsError, UnitDoesntExistError
-from .units import Unit, UnitPrefix, UNITS, PREFIXES
+from .exceptions import UnitDoesntExistError
+from .units import PREFIXES, UNITS
 
 
 class GlobalParser(object):
 
     VALUE_PATTERN = "[0-9.]*"
     UNIT_PATTERN = ".*"
-    VALUE_WITH_UNIT_REGEX = re.compile("(%s) *(%s)?" % (VALUE_PATTERN, UNIT_PATTERN))
+    VALUE_WITH_UNIT_REGEX = re.compile(
+        "(%s) *(%s)?" % (VALUE_PATTERN, UNIT_PATTERN))
 
     def __init__(self, **options):
         self.options = options
 
     def get_value(self, string):
-        value_as_string, units_as_string = self.VALUE_WITH_UNIT_REGEX.match(string).groups()
+        value_as_string, units_as_string = self.VALUE_WITH_UNIT_REGEX.match(
+            string).groups()
         return D(value_as_string)
 
     def get_units(self, string):
-        value_as_string, units_as_string = self.VALUE_WITH_UNIT_REGEX.match(string).groups()
+        value_as_string, units_as_string = self.VALUE_WITH_UNIT_REGEX.match(
+            string).groups()
         return units_as_string
 
 
@@ -36,7 +39,7 @@ class BasicUnitParser(object):
 
         first_letter = string[0]
         # Case with a prefix
-        if first_letter in PREFIXES.keys() and first_letter not in ('m', 'T', 'd'):
+        if first_letter in PREFIXES.keys() and first_letter not in 'mTd':
             unit_as_string = string[1:]
 
         #   da prefix (two letters prefix)
@@ -68,7 +71,7 @@ class BasicUnitParser(object):
 
         first_letter = string[0]
         # Case with a prefix
-        if first_letter in PREFIXES.keys() and first_letter not in ('m', 'T', 'd'):
+        if first_letter in PREFIXES.keys() and first_letter not in 'mTd':
             prefix_as_string = first_letter
 
         #   da prefix (two letters prefix)

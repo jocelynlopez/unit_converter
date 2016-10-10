@@ -15,10 +15,12 @@ class UnitPrefix(object):
         elif isinstance(factor, D):
             self.factor = factor
         else:
-            raise TypeError("factor need to be a 'string' or a 'decimal.Decimal' class")
+            raise TypeError("factor need to be a 'string' or a"
+                            " 'decimal.Decimal' class")
 
     def __repr__(self):
-        return "UnitPrefix(symbol='%s', name='%s', factor='%s')" % (self.symbol, self.name, self.factor)
+        return ("UnitPrefix(symbol='%s', name='%s', factor='%s')" %
+                (self.symbol, self.name, self.factor))
 
     def is_same_factor(self, other_prefix):
         return self.factor == other_prefix.factor
@@ -43,12 +45,15 @@ class UnitPrefix(object):
                               offset=unit.offset)
             return final_unit
         else:
-            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
+            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" %
+                            (type(self), type(unit)))
 
 
 class Unit(object):
 
-    def __init__(self, symbol, name, L=0, M=0, T=0, I=0, THETA=0, N=0, J=0, coef=D('1'), offset=D('0')):
+    def __init__(self, symbol, name,
+                 L=0, M=0, T=0, I=0, THETA=0, N=0, J=0,
+                 coef=D('1'), offset=D('0')):
         self.symbol = symbol
         self.name = name
         self.coef = coef
@@ -65,8 +70,10 @@ class Unit(object):
         self.J = J              # Luminous intensity
 
     def __repr__(self):
-        args = "symbol='%s', name='%s', L='%s', M='%s', " % (self.symbol, self.name, self.L, self.M)
-        args += "T='%s', I='%s', THETA='%s', N='%s', J='%s'" % (self.T, self.I, self.THETA, self.N, self.J)
+        args = "symbol='%s', name='%s', L='%s', M='%s', " % (
+            self.symbol, self.name, self.L, self.M)
+        args += "T='%s', I='%s', THETA='%s', N='%s', J='%s'" % (
+            self.T, self.I, self.THETA, self.N, self.J)
         args += ", coef='%s', offset='%s'" % (self.coef, self.offset)
         return "UnitPrefix(%s)" % args
 
@@ -101,7 +108,8 @@ class Unit(object):
                                         offset=self.offset + unit.offset)
             return final_unit
         except AttributeError:
-            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(unit)))
+            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" %
+                            (type(self), type(unit)))
 
     def __pow__(self, power):
         if isinstance(power, int) or isinstance(power, float):
@@ -122,7 +130,8 @@ class Unit(object):
                                         offset=new_offset)
             return final_unit
         else:
-            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" % (type(self), type(power)))
+            raise TypeError("unsupported operand type(s) for : '%s' and '%s'" %
+                            (type(self), type(power)))
 
 
 # ----------
@@ -194,7 +203,8 @@ kat = Unit('kat', 'katal', T=-1, N=1)
 # ----------------
 # Imperial system
 # ----------------
-degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D('273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
+degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D(
+    '273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
 
 
 UNITS = {

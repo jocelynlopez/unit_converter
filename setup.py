@@ -34,7 +34,8 @@ classifiers = (
 # ------------------------------
 def extract_value_from__init__(name):
     with open('generic_converter/__init__.py', 'r') as fd:
-        r = re.search('^__%s__\s*=\s*[\'"]([^\'"]*)[\'"]' % name, fd.read(), re.MULTILINE)
+        r = re.search('^__%s__\s*=\s*[\'"]([^\'"]*)[\'"]' %
+                      name, fd.read(), re.MULTILINE)
     if not r:
         raise RuntimeError('Cannot find __%s__ information' % name)
     else:

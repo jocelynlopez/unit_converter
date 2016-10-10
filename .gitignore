@@ -4,3 +4,6 @@
 venv
 coverage_html_report
 __pycache__
+build
+dist
+*.egg-info
