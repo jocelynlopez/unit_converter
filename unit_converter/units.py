@@ -51,11 +51,12 @@ class UnitPrefix(object):
 
 class Unit(object):
 
-    def __init__(self, symbol, name,
+    def __init__(self, symbol, name, plural_name=None,
                  L=0, M=0, T=0, I=0, THETA=0, N=0, J=0,
                  coef=D('1'), offset=D('0')):
         self.symbol = symbol
         self.name = name
+        self.plural_name = plural_name or name
         self.coef = coef
         self.offset = offset
 
@@ -67,7 +68,7 @@ class Unit(object):
         self.I = I              # Electric current
         self.THETA = THETA      # Thermodynamic temperature
         self.N = N              # Amount of substance
-        self.J = J              # Luminous intensity
+        self.J = J              # Light intensity
 
     def __repr__(self):
         args = "symbol='%s', name='%s', L='%s', M='%s', " % (
@@ -206,6 +207,10 @@ kat = Unit('kat', 'katal', T=-1, N=1)
 degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D(
     '273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
 
+# -------------------
+# Miscellaneous units
+# -------------------
+bar = Unit('bar', 'bar', M=1, L=-1, T=-2, coef=D('1E5'))
 
 UNITS = {
     # Basic SI units
@@ -243,4 +248,7 @@ UNITS = {
 
     # Imperial system
     '°F': degreesF,
+
+    # Miscellaneous units
+    'bar': bar,
 }

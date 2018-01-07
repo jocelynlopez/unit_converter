@@ -4,8 +4,8 @@
 import re
 from decimal import Decimal as D
 
-from .exceptions import UnitDoesntExistError
 from .units import PREFIXES, UNITS
+from .exceptions import UnitDoesntExistError
 
 
 class GlobalParser(object):
@@ -120,7 +120,7 @@ class ComposedUnitParser(object):
                 power = float(basic_unit[1])
                 units.append(unit**power)
             else:
-                raise TypeError('sucessive ^ operator are not implemented')
+                raise TypeError('successive ^ operator are not implemented')
         return units
 
     def get_unit(self, composed_unit_as_string):

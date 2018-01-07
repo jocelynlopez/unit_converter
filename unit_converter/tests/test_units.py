@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 # -*- encoding=utf-8 -*-
 
+import unittest
 from decimal import Decimal as D
 
-import unittest
 import pytest
 
-from ..units import UnitPrefix, PREFIXES, Unit, UNITS
-from ..exceptions import UnConsistentUnitsError
-from ..converter import BasicUnitConverter
+from unit_converter.units import UnitPrefix, Unit, UNITS
 
 
 # ---------------------------
 # Test BasicUnitParser class
 # ---------------------------
-class Test_UnitPrefix(unittest.TestCase):
+class TestUnitPrefix(unittest.TestCase):
 
     # -----------------------------
     # Test __init__ method
@@ -55,7 +53,7 @@ class Test_UnitPrefix(unittest.TestCase):
 # ---------------------------
 # Test Unit class
 # ---------------------------
-class Test_Unit(unittest.TestCase):
+class TestUnit(unittest.TestCase):
 
     # -----------------------------
     # Test __mult__ method

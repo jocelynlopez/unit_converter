@@ -10,7 +10,7 @@ from codecs import open
 from setuptools import setup, find_packages
 
 
-# Packages informations :
+# Packages information :
 # -----------------------
 requires = []
 test_requirements = []
@@ -26,14 +26,14 @@ classifiers = (
     'Natural Language :: English',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
 )
 
 
-# Extract infos from __init__.py
+# Extract info from __init__.py
 # ------------------------------
 def extract_value_from__init__(name):
-    with open('generic_converter/__init__.py', 'r') as fd:
+    with open('unit_converter/__init__.py', 'r') as fd:
         r = re.search('^__%s__\s*=\s*[\'"]([^\'"]*)[\'"]' %
                       name, fd.read(), re.MULTILINE)
     if not r:

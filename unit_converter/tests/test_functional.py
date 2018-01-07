@@ -5,8 +5,8 @@ from decimal import Decimal as D
 
 import pytest
 
-import generic_converter.units as u
-
+import unit_converter.units as u
+from unit_converter.converter import convert, converts
 
 TESTS_CASES = [
     # (value, current_unit, expected_value, desired_unit)
@@ -48,8 +48,9 @@ TESTS_TOLERANCE_TRUE = [
 
 @pytest.mark.parametrize("value, current_unit, expected_value, desired_unit", TESTS_CASES)
 def test_cases(value, current_unit, expected_value, desired_unit):
-    converter = u.SmartUnitsConverter()
-    result_value = converter.convert(value, desired_unit, current_unit)
+    # converter = u.SmartUnitsConverter()
+    # result_value = converter.convert(value, desired_unit, current_unit)
+    result_value = convert(value, desired_unit, current_unit)
     assert result_value == expected_value
 
 
@@ -60,6 +61,7 @@ def test_cases_tol_true(value, current_unit, expected_value, desired_unit):
 
 @pytest.mark.parametrize("value, current_unit, expected_value, desired_unit", TESTS_TOLERANCE_FALSE)
 def test_cases_tol_false(value, current_unit, expected_value, desired_unit):
-    converter = u.SmartUnitsConverter()
-    result_value = converter.convert(value, desired_unit, current_unit)
+    # converter = u.SmartUnitsConverter()
+    # result_value = converter.convert(value, desired_unit, current_unit)
+    result_value = convert(value, desired_unit, current_unit)
     assert not result_value == expected_value

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- encoding=utf-8 -*-
 
+import unittest
 from decimal import Decimal as D
 
-import unittest
 import pytest
 
-from ..units import UNITS
+from unit_converter.converter import BasicUnitConverter
+from unit_converter.units import UNITS
 from ..exceptions import UnConsistentUnitsError
-from ..converter import BasicUnitConverter
 
 
 # ---------------------------

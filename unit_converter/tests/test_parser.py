@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- encoding=utf-8 -*-
 
+import unittest
 from decimal import Decimal as D
 
-import unittest
 import pytest
 
-from ..units import Unit, UNITS, PREFIXES
-from ..parser import GlobalParser, BasicUnitParser, ComposedUnitParser
+from unit_converter.parser import GlobalParser, BasicUnitParser, ComposedUnitParser
+from unit_converter.units import Unit, UNITS, PREFIXES
 from ..exceptions import UnitDoesntExistError
 
 

@@ -1,7 +1,7 @@
 
-*****************
-Generic Converter
-*****************
+**************
+Unit Converter
+**************
 
 Description
 ===========
@@ -12,13 +12,15 @@ Package for parsing as string quantities with or without units.
 Basic usages
 ============
 
->>> from generic_converter.units import SmartUnitsConverter
+>>> from unit_converter import convert, converts
 >>>
->>> c = SmartUnitsConverter()
->>> c.convert('2.78 daN*mm^2', 'mN*µm^2')
+>>> convert('2.78 daN*mm^2', 'mN*µm^2')
 >>> Decimal('2.78E+10')
 >>>
->>> c.convert('2.78', 'mN*µm^2', 'daN*mm^2')
+>>> converts('2.78 daN*mm^2', 'mN*µm^2')
+>>> '2.78E+10'
+>>>
+>>> convert('2.78', 'mN*µm^2', 'daN*mm^2')
 >>> Decimal('2.78E+10')
 
 Note: It is necessary to provide the value as a string. Indeed, the high precision of conversion (1E-27) is possible only with string, by using Decimal object in replacement of float object.
@@ -29,7 +31,7 @@ Please submit and comment on bug reports and feature requests.
 
 To submit a patch:
 
-1. Fork it (https://bitbucket.org/negetem/generic_converter/fork).
+1. Fork it (https://bitbucket.org/negetem/unit_converter/fork).
 2. Create your feature branch (*git checkout -b my-new-feature*).
 3. Make changes.
 4. Commit your changes (*git commit -am 'Add some feature'*).
@@ -63,5 +65,8 @@ Release History
 
 - Added support for combined units like '**kg*m*s^-2**'
 
+0.1.7 (2018-01-07)
+==================
 
-
+**Improvements**
+- Added handy functions convert and converts (return a string)
