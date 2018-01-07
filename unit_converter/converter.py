@@ -5,9 +5,45 @@
 
 from decimal import Decimal as D
 
+from .units import Unit
 from .exceptions import UnConsistentUnitsError
 from .parser import BasicUnitParser, ComposedUnitParser, GlobalParser
-from .units import Unit
+
+
+def convert(value, desired_unit, current_unit=None):
+    """
+
+    :param value:
+    :param desired_unit:
+    :param current_unit:
+    :return:
+
+    Examples :
+    ----------
+
+    >>> from unit_converter import convert
+    >>> convert('2.78 daN*mm^2', 'mN*µm^2')
+    Decimal('2.78E+10')
+    """
+    return SmartUnitsConverter().convert(value, desired_unit, current_unit)
+
+
+def converts(value, desired_unit, current_unit=None):
+    """
+
+    :param value:
+    :param desired_unit:
+    :param current_unit:
+    :return:
+
+    Examples :
+    ----------
+
+    >>> from unit_converter import converts
+    >>> converts('2.78 daN*mm^2', 'mN*µm^2')
+    '2.78E+10'
+    """
+    return str(convert(value, desired_unit, current_unit))
 
 
 class BasicUnitConverter(object):
@@ -22,7 +58,7 @@ class BasicUnitConverter(object):
     Examples :
     ----------
 
-    >>> from generic_converter.units import BasicUnitConverter
+    >>> from unit_converter.units import BasicUnitConverter
     >>> converter = BasicUnitConverter()
     >>> converter.convert('2.78 dam', 'µm')
     Decimal('2.78E+7')
