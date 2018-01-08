@@ -94,23 +94,37 @@ class Unit(object):
                 self.coef == other_unit.coef and
                 self.offset == other_unit.offset)
 
-    def __mul__(self, unit):
-        try:
-            final_unit = self.__class__(symbol=self.symbol + '*' + unit.symbol,
-                                        name=self.name + '*' + unit.name,
-                                        L=self.L + unit.L,
-                                        M=self.M + unit.M,
-                                        T=self.T + unit.T,
-                                        I=self.I + unit.I,
-                                        THETA=self.THETA + unit.THETA,
-                                        N=self.N + unit.N,
-                                        J=self.J + unit.J,
-                                        coef=self.coef * unit.coef,
-                                        offset=self.offset + unit.offset)
-            return final_unit
-        except AttributeError:
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __mul__(self, other):
+        if isinstance(other, Unit):
+            return self.__class__(symbol=self.symbol + '*' + other.symbol,
+                                  name=self.name + '*' + other.name,
+                                  L=self.L + other.L,
+                                  M=self.M + other.M,
+                                  T=self.T + other.T,
+                                  I=self.I + other.I,
+                                  THETA=self.THETA + other.THETA,
+                                  N=self.N + other.N,
+                                  J=self.J + other.J,
+                                  coef=self.coef * other.coef,
+                                  offset=self.offset + other.offset)
+        if type(other) in (int, float, D):
+            return self.__class__(symbol=self.symbol,
+                                  name=self.name,
+                                  L=self.L,
+                                  M=self.M,
+                                  T=self.T,
+                                  I=self.I,
+                                  THETA=self.THETA,
+                                  N=self.N,
+                                  J=self.J,
+                                  coef=self.coef * other,
+                                  offset=self.offset)
+        else:
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" %
-                            (type(self), type(unit)))
+                            (type(self), type(other)))
 
     def __pow__(self, power):
         if isinstance(power, int) or isinstance(power, float):
@@ -206,6 +220,21 @@ kat = Unit('kat', 'katal', T=-1, N=1)
 # ----------------
 degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D(
     '273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
+# Length
+thou = Unit('th', 'thou', L=1, coef=D('2.54E-5'))
+inch = Unit('in', 'inch', L=1, coef=D('2.54E-2'))
+foot = Unit('ft', 'foot', L=1, coef=D('3.048E-1'))
+yard = Unit('yd', 'yard', L=1, coef=D('9.144E-1'))
+chain = Unit('ch', 'chain', L=1, coef=D('20.1168'))
+furlong = Unit('fur', 'furlong', L=1, coef=D('201.168'))
+mile = Unit('ml', 'mile', L=1, coef=D('1609.344'))
+league = Unit('lea', 'league', L=1, coef=D('4828.032'))
+
+rod = D("5.5")*yard
+# Area
+# perch =
+# rood = Unit('rood', 'rood', L=2, coef=D('2.54E-5'))
+# acre = Unit('acre', 'acre', L=2, coef=D('2.54E-5'))
 
 # -------------------
 # Miscellaneous units
@@ -248,6 +277,14 @@ UNITS = {
 
     # Imperial system
     '°F': degreesF,
+    'thou': thou,
+    'inch': inch,
+    'foot': foot,
+    'yard': yard,
+    'chain': chain,
+    'furlong': furlong,
+    'mile': mile,
+    'league': league,
 
     # Miscellaneous units
     'bar': bar,

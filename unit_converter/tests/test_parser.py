@@ -14,7 +14,7 @@ from ..exceptions import UnitDoesntExistError
 # ------------------------
 # Test GlobalParser class
 # ------------------------
-class Test_GlobalParser(unittest.TestCase):
+class TestGlobalParser(unittest.TestCase):
 
     # Test get_value method
     # ----------------------------
@@ -47,7 +47,7 @@ class Test_GlobalParser(unittest.TestCase):
 # ---------------------------
 # Test BasicUnitParser class
 # ---------------------------
-class Test_BasicUnitParser(unittest.TestCase):
+class TestBasicUnitParser(unittest.TestCase):
 
     # Test get_default_unit method
     # ----------------------------
@@ -126,7 +126,7 @@ class Test_BasicUnitParser(unittest.TestCase):
 # ------------------------
 # Test ComposedUnitParser class
 # ------------------------
-class Test_ComposedUnitParser(unittest.TestCase):
+class TestComposedUnitParser(unittest.TestCase):
 
     # Test get_units method
     # ----------------------------
