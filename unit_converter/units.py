@@ -89,8 +89,6 @@ class Unit(object):
 
     def __eq__(self, other_unit):
         return (self.is_same_dimension(other_unit) and
-                self.symbol == other_unit.symbol and
-                self.name == other_unit.name and
                 self.coef == other_unit.coef and
                 self.offset == other_unit.offset)
 

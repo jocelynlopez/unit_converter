@@ -7,7 +7,7 @@ from decimal import Decimal as D
 
 from .units import Unit
 from .exceptions import UnConsistentUnitsError
-from .parser import BasicUnitParser, ComposedUnitParser, GlobalParser
+from .parser import BasicUnitParser
 
 
 def convert(value, desired_unit, current_unit=None):

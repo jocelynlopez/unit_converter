@@ -6,9 +6,23 @@ from decimal import Decimal as D
 
 import pytest
 
-from unit_converter.parser import GlobalParser, BasicUnitParser, ComposedUnitParser
+from unit_converter.parser import UnitParser, GlobalParser, BasicUnitParser, ComposedUnitParser
 from unit_converter.units import Unit, UNITS, PREFIXES
 from ..exceptions import UnitDoesntExistError
+
+
+# ------------------------
+# Test UnitParser class
+# ------------------------
+class TestUnitParser(unittest.TestCase):
+
+    # Test _parse_simple_unit method
+    # ----------------------------
+    def test_parse(self):
+        unit_s = 'm^3*s^-2'
+        unit_expected = Unit('', '', L=3, M=0, T=-2, I=0, THETA=0, N=0, J=0,
+                             coef=D('1'), offset=D('0'))
+        self.assertEqual(unit_expected, UnitParser().parse(unit_s))
 
 
 # ------------------------
@@ -19,7 +33,7 @@ class TestGlobalParser(unittest.TestCase):
     # Test get_value method
     # ----------------------------
     def test_GlobalParser_get_value(self):
-        string_input = '56.292 kg*m/s^2'
+        string_input = '56.292 kg*m*s^-2'
         value_expected = '56.292'
         assert D(value_expected) == GlobalParser().get_value(string_input)
 
