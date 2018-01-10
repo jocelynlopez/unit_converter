@@ -40,15 +40,7 @@ class UnitParser(object):
 
 class QuantityParser(object):
 
-    quantity_re = re.compile("(?P<value>\d+\.?\d*) *(?P<unit>.*)")
-
-    def __init__(self, decimal_mark='.'):
-        self.decimal_mark = decimal_mark
-        
-        if self.decimal_mark == ",":
-            self.quantity_re = re.compile(" *(?P<value>\d+,?\d*) *(?P<unit>.*) *")
-        elif not decimal_mark == ".":
-            raise ValueError("decimal_mark need to be equal to '.' or ','.")
+    quantity_re = re.compile("(?P<value>\d+[.,]?\d*) *(?P<unit>.*)")
 
     def parse(self, quantity: str) -> tuple:
         r = self.quantity_re.match(quantity)
