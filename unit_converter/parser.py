@@ -10,18 +10,14 @@ from .exceptions import UnitDoesntExistError
 
 class UnitParser(object):
     unit_re = re.compile("(?P<unit>[a-zA-Z°Ωµ])+\^?(?P<pow>[-+]?[0-9]*\.?[0-9]*)")
-    unit_re_without_group = re.compile("[a-zA-Z°Ωµ]+\^?[-+]?[0-9]*\.?[0-9]*")
 
     def parse(self, unit: str) -> Unit:
-        l_unit_s = self.unit_re_without_group.findall(unit)
+        l_unit_s = self.unit_re.findall(unit)
         l_unit = list(map(self._parse_unit, l_unit_s))
         return reduce(lambda x, y: x * y, l_unit)
 
-    def _parse_unit(self, unit: str) -> Unit:
-        r = self.unit_re.match(unit)
-        power = float(r.group("pow"))
-        unit = self._parse_simple_unit(r.group("unit"))
-        return unit**power
+    def _parse_unit(self, unit: str, power: str) -> Unit:
+        return self._parse_simple_unit(unit)**float(power)
 
     @staticmethod
     def _parse_simple_unit(unit: str) -> Unit:
