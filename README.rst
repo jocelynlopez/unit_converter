@@ -65,8 +65,9 @@ Release History
 
 - Added support for combined units like '**kg*m*s^-2**'
 
-0.1.7 (2018-01-07)
+0.2.1 (2018-01-15)
 ==================
 
 **Improvements**
+- Big code refactoring
 - Added handy functions convert and converts (return a string)
