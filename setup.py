@@ -29,28 +29,6 @@ classifiers = (
     'Programming Language :: Python :: 3.6',
 )
 
-
-# Extract info from __init__.py
-# ------------------------------
-def extract_value_from__init__(name):
-    with open('unit_converter/__init__.py', 'r') as fd:
-        r = re.search('^__%s__\s*=\s*[\'"]([^\'"]*)[\'"]' %
-                      name, fd.read(), re.MULTILINE)
-    if not r:
-        raise RuntimeError('Cannot find __%s__ information' % name)
-    else:
-        return r.group(1)
-
-name = extract_value_from__init__('title')
-version = extract_value_from__init__('version')
-author = extract_value_from__init__('author')
-author_email = extract_value_from__init__('author_email')
-url = extract_value_from__init__('url')
-license = extract_value_from__init__('license')
-description = extract_value_from__init__('description')
-keywords = extract_value_from__init__('keywords')
-
-
 # Extract content from README.md
 # -------------------------------
 with open('README.rst', 'r', 'utf-8') as f:
@@ -58,18 +36,18 @@ with open('README.rst', 'r', 'utf-8') as f:
 
 # Setup
 # -----
-setup(name=name,
-      version=version,
-      description=description,
+setup(name='unit_converter',
+      version='0.1.7',
+      description='Package for converting quantities in different unit.',
       long_description=readme,
-      author=author,
-      author_email=author_email,
-      url=url,
+      author='Jocelyn LOPEZ',
+      author_email='jocelyn.lopez.pro@gmail.com',
+      url='https://bitbucket.org/jocelynlopez/unit_converter',
       packages=packages,
       # package_data=package_data,
       include_package_data=True,
       install_requires=requires,
-      license=license,
-      keywords=keywords,
+      license='MIT',
+      keywords='converter units sciences',
       classifiers=classifiers,
       tests_require=test_requirements)
