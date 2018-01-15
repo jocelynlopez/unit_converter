@@ -3,6 +3,8 @@
 
 from decimal import Decimal as D
 
+from unit_converter.exceptions import UnConsistentUnitsError
+
 
 class UnitPrefix(object):
 
@@ -60,7 +62,7 @@ class Unit(object):
         self.coef = coef
         self.offset = offset
 
-        # Dimensionnal quantities
+        # Dimensional quantities
         # -----------------------
         self.L = L              # Length
         self.M = M              # Mass
@@ -71,12 +73,13 @@ class Unit(object):
         self.J = J              # Light intensity
 
     def __repr__(self):
-        args = "symbol='%s', name='%s', L='%s', M='%s', " % (
-            self.symbol, self.name, self.L, self.M)
-        args += "T='%s', I='%s', THETA='%s', N='%s', J='%s'" % (
-            self.T, self.I, self.THETA, self.N, self.J)
-        args += ", coef='%s', offset='%s'" % (self.coef, self.offset)
-        return "UnitPrefix(%s)" % args
+        # TODO: Add a better representation including coef and offset.
+        # TODO: Hide plotting 0 dimension
+        l_units_r = ("m^%s", "kg^%s", "s^%s", "A^%s", "K^%s", "mol^%s", "cd^%s")
+        units = (self.L, self.M, self.T, self.I, self.THETA, self.N, self.J)
+
+        unit_r = [r % units[idx] for idx, r in enumerate(l_units_r) if units[idx]]
+        return '*'.join(unit_r)
 
     def is_same_dimension(self, other_unit):
         return (self.L == other_unit.L and
@@ -87,13 +90,10 @@ class Unit(object):
                 self.N == other_unit.N and
                 self.J == other_unit.J)
 
-    def __eq__(self, other_unit):
-        return (self.is_same_dimension(other_unit) and
-                self.coef == other_unit.coef and
-                self.offset == other_unit.offset)
-
-    def __rmul__(self, other):
-        return self.__mul__(other)
+    def __eq__(self, other):
+        return (self.is_same_dimension(other) and
+                self.coef == other.coef and
+                self.offset == other.offset)
 
     def __mul__(self, other):
         if isinstance(other, Unit):
@@ -108,29 +108,19 @@ class Unit(object):
                                   J=self.J + other.J,
                                   coef=self.coef * other.coef,
                                   offset=self.offset + other.offset)
-        if type(other) in (int, float, D):
-            return self.__class__(symbol=self.symbol,
-                                  name=self.name,
-                                  L=self.L,
-                                  M=self.M,
-                                  T=self.T,
-                                  I=self.I,
-                                  THETA=self.THETA,
-                                  N=self.N,
-                                  J=self.J,
-                                  coef=self.coef * other,
-                                  offset=self.offset)
+        elif type(other) in (int, float, D):
+            return Quantity(value=other, unit=self)
         else:
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" %
                             (type(self), type(other)))
 
     def __pow__(self, power):
-        if isinstance(power, int) or isinstance(power, float):
+        if type(power) in (int, float, D):
             if self.offset:
                 new_offset = self.offset**D(power)
             else:
                 new_offset = self.offset
-            final_unit = self.__class__(symbol=self.symbol + '^' + str(power),
+            final_unit = self.__class__(symbol=self.symbol + '^' + str(power),  # TODO: attention manque des parenthèses etc..
                                         name=self.name + '^' + str(power),
                                         L=self.L * power,
                                         M=self.M * power,
@@ -146,144 +136,71 @@ class Unit(object):
             raise TypeError("unsupported operand type(s) for : '%s' and '%s'" %
                             (type(self), type(power)))
 
+    def __truediv__(self, other):
+        return self.__pow__(-1)
 
-# ----------
-# Prefix SI
-# ----------
-PREFIXES = {
-    'y': UnitPrefix(symbol='y', name='yocto', factor=D('1E-24')),
-    'z': UnitPrefix(symbol='z', name='zepto', factor=D('1E-21')),
-    'a': UnitPrefix(symbol='a', name='atto', factor=D('1E-18')),
-    'f': UnitPrefix(symbol='f', name='femto', factor=D('1E-15')),
-    'p': UnitPrefix(symbol='p', name='pico', factor=D('1E-12')),
-    'n': UnitPrefix(symbol='n', name='nano', factor=D('1E-9')),
-    'µ': UnitPrefix(symbol='µ', name='micro', factor=D('1E-6')),
-    'm': UnitPrefix(symbol='m', name='milli', factor=D('1E-3')),
-    'c': UnitPrefix(symbol='c', name='centi', factor=D('1E-2')),
-    'd': UnitPrefix(symbol='d', name='deci', factor=D('1E-1')),
-    '': UnitPrefix(symbol='', name='', factor=D('1E0')),
-    'da': UnitPrefix(symbol='da', name='deca', factor=D('1E+1')),
-    'h': UnitPrefix(symbol='h', name='hecto', factor=D('1E+2')),
-    'k': UnitPrefix(symbol='k', name='kilo', factor=D('1E+3')),
-    'M': UnitPrefix(symbol='M', name='mega', factor=D('1E+6')),
-    'G': UnitPrefix(symbol='G', name='giga', factor=D('1E+9')),
-    'T': UnitPrefix(symbol='T', name='tera', factor=D('1E+12')),
-    'P': UnitPrefix(symbol='P', name='peta', factor=D('1E+15')),
-    'E': UnitPrefix(symbol='E', name='exa', factor=D('1E+18')),
-    'Z': UnitPrefix(symbol='Z', name='zetta', factor=D('1E+21')),
-    'Y': UnitPrefix(symbol='Y', name='yotta', factor=D('1E+24')),
-}
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other):
+        return self.__truediv__(other)
 
 
-# ---------------
-# Basic SI units
-# ---------------
-m = Unit('m', 'meter', L=1)
-g = Unit('g', 'gram', M=1, coef=D('1E-3'))
-s = Unit('s', 'second', T=1)
-A = Unit('A', 'ampere', I=1)
-K = Unit('K', 'kelvin', THETA=1)
-mol = Unit('mol', 'mole', N=1)
-cd = Unit('cd', 'candela', J=1)
+class Quantity(object):
 
+    def __init__(self, value, unit):
+        if type(value) in (int, float, D):
+            self.value = value
+        else:
+            raise TypeError("value must be an int, float or decimal class")
 
-# -----------------
-# Derived SI units
-# -----------------
-Hz = Unit('Hz', 'hertz', T=-1)
-N = Unit('N', 'newton', M=1, L=1, T=-2)
-Pa = Unit('Pa', 'pascal', M=1, L=-1, T=-2)
-J = Unit('J', 'joule', M=1, L=2, T=-2)
-W = Unit('W', 'watt', M=1, L=2, T=-3)
-C = Unit('C', 'coulomb', T=1, I=1)
-V = Unit('V', 'volt', M=1, L=2, T=-3, I=-1)
-Ohm = Unit('Ω', 'ohm', M=1, L=2, T=-3, I=-2)
-S = Unit('S', 'siemens', M=-1, L=-2, T=3, I=2)
-F = Unit('F', 'farad', M=-1, L=-2, T=4, I=2)
-T = Unit('T', 'tesla', M=1, T=-2, I=-1)
-Wb = Unit('Wb', 'weber', M=1, L=2, T=-2, I=-1)
-H = Unit('H', 'henry', M=1, L=2, T=-2, I=-2)
-degreesC = Unit('°C', 'celsius', THETA=1, offset=D('273.15'))
-rad = Unit('rad', 'radian')
-# sr = Unit('sr', 'steradian')
-lm = Unit('lm', 'lumen', J=1)
-lx = Unit('lx', 'lux', L=-2, J=1)
-Bq = Unit('Bq', 'becquerel', T=-1)
-Gy = Unit('Gy', 'gray', L=2, T=-2)
-Sv = Unit('Sv', 'sievert', L=2, T=-2)
-kat = Unit('kat', 'katal', T=-1, N=1)
+        if isinstance(unit, Unit):
+            self.unit = unit
+        else:
+            raise TypeError("unit must be an Unit class")
 
-# ----------------
-# Imperial system
-# ----------------
-degreesF = Unit('°F', 'fahrenheit', THETA=1, offset=D(
-    '273.15') - D('32') / D('1.8'), coef=D('1') / D('1.8'))
-# Length
-thou = Unit('th', 'thou', L=1, coef=D('2.54E-5'))
-inch = Unit('in', 'inch', L=1, coef=D('2.54E-2'))
-foot = Unit('ft', 'foot', L=1, coef=D('3.048E-1'))
-yard = Unit('yd', 'yard', L=1, coef=D('9.144E-1'))
-chain = Unit('ch', 'chain', L=1, coef=D('20.1168'))
-furlong = Unit('fur', 'furlong', L=1, coef=D('201.168'))
-mile = Unit('ml', 'mile', L=1, coef=D('1609.344'))
-league = Unit('lea', 'league', L=1, coef=D('4828.032'))
+    def convert(self, desired_unit: Unit):
+        # Check dimension from current and desired units
+        if not desired_unit.is_same_dimension(self.unit):
+            raise UnConsistentUnitsError(desired_unit.name, self.unit.name)
 
-rod = D("5.5")*yard
-# Area
-# perch =
-# rood = Unit('rood', 'rood', L=2, coef=D('2.54E-5'))
-# acre = Unit('acre', 'acre', L=2, coef=D('2.54E-5'))
+        default_value = self.unit.offset + self.value * self.unit.coef
+        desired_value = (-desired_unit.offset + default_value) / desired_unit.coef
+        return self.__class__(value=desired_value, unit=self.unit)
 
-# -------------------
-# Miscellaneous units
-# -------------------
-bar = Unit('bar', 'bar', M=1, L=-1, T=-2, coef=D('1E5'))
+    def __repr__(self):
+        return str(self.value) + ' ' + str(self.unit)
 
-UNITS = {
-    # Basic SI units
-    'm': m,
-    'g': g,
-    's': s,
-    'A': A,
-    'K': K,
-    'mol': mol,
-    'cd': cd,
+    def __add__(self, other):
+        if isinstance(other, Quantity):
+            if self.unit == other.unit:
+                return self.__class__(self.value + other.value, self.unit)
 
-    # Derived SI units
-    'Hz': Hz,
-    'N': N,
-    'Pa': Pa,
-    'J': J,
-    'W': W,
-    'C': C,
-    'V': V,
-    'Ω': Ohm,
-    'S': S,
-    'F': F,
-    'T': T,
-    'Wb': Wb,
-    'H': H,
-    '°C': degreesC,
-    'rad': rad,
-    # 'sr': sr,
-    'lm': lm,
-    'lx': lx,
-    'Bq': Bq,
-    'Gy': Gy,
-    'Sv': Sv,
-    'kat': kat,
+    def __sub__(self, other):
+        if isinstance(other, Quantity):
+            if self.unit == other.unit:
+                return self.__class__(self.value - other.value, self.unit)
 
-    # Imperial system
-    '°F': degreesF,
-    'thou': thou,
-    'inch': inch,
-    'foot': foot,
-    'yard': yard,
-    'chain': chain,
-    'furlong': furlong,
-    'mile': mile,
-    'league': league,
+    def __mul__(self, other):
+        if isinstance(other, Quantity):
+            if self.unit == other.unit:
+                return self.__class__(self.value * other.value,
+                                      self.unit * other.unit)
 
-    # Miscellaneous units
-    'bar': bar,
-}
+    def __truediv__(self, other):
+        if isinstance(other, Quantity):
+            if self.unit == other.unit:
+                return self.__class__(self.value / other.value,
+                                      self.unit / other.unit)
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        return self.__sub__(other)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other):
+        return self.__truediv__(other)
