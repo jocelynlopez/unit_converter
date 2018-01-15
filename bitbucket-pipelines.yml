@@ -13,3 +13,4 @@ pipelines:
           - pip install -r requirements_test.txt
           - pip install -e .
           - pytest
+          - deploy.bash
