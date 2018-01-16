@@ -22,7 +22,10 @@ class QuantityParser(object):
         r = self.quantity_re.match(quantity)
         unit = UnitParser().parse(r.group("unit"))
         if r.group("value") is not None:
-            value = D(r.group("value"))
+            if ',' in r.group("value"):
+                value = D(r.group("value").replace(',', '.'))
+            else:
+                value = D(r.group("value"))
             return Quantity(value, unit)
         else:
             return unit
