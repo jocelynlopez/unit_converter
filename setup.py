@@ -33,7 +33,7 @@ with open('README.rst', 'r', 'utf-8') as f:
 # Setup
 # -----
 setup(name='unit_converter',
-      version='1.0.0',
+      version='1.1.0',
       description='Package for converting quantities in different unit.',
       long_description=readme,
       author='Jocelyn LOPEZ',
