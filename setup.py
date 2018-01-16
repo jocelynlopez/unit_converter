@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-import os
-import re
-import sys
-
 from codecs import open
 
 from setuptools import setup, find_packages
-
 
 # Packages information :
 # -----------------------
@@ -16,7 +11,8 @@ requires = []
 test_requirements = []
 
 package_data = {'': ['LICENSE']}
-packages = find_packages(exclude=['tests*'])
+# packages = find_packages(exclude=['tests*'])
+packages = ['unit_converter']
 
 classifiers = (
     'Development Status :: 1 - Planning',
@@ -37,7 +33,7 @@ with open('README.rst', 'r', 'utf-8') as f:
 # Setup
 # -----
 setup(name='unit_converter',
-      version='0.1.7',
+      version='1.0.0',
       description='Package for converting quantities in different unit.',
       long_description=readme,
       author='Jocelyn LOPEZ',

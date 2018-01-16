@@ -1,12 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
-# PYPI_USERNAME - (Required) Username for the publisher's account on PyPI
-# PYPI_PASSWORD - (Required, Secret) Password for the publisher's account on PyPI
-
-cat <<'EOF' >> .pypirc
-[pypi]
-repository=https://pypi.python.org/pypi
-username=$PYPI_USERNAME
-password=$PYPI_PASSWORD
-EOF
-python setup.py sdist bdist_wheel upload
+python setup.py bdist_wheel
+twine upload dist/*

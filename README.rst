@@ -6,13 +6,13 @@ Unit Converter
 Description
 ===========
 
-Package for parsing as string quantities with or without units.
+Package for converting quantities into different units.
 
 
 Basic usages
 ============
 
->>> from unit_converter import convert, converts
+>>> from unit_converter.converter import convert, converts
 >>>
 >>> convert('2.78 daN*mm^2', 'mN*µm^2')
 >>> Decimal('2.78E+10')
@@ -20,8 +20,16 @@ Basic usages
 >>> converts('2.78 daN*mm^2', 'mN*µm^2')
 >>> '2.78E+10'
 >>>
->>> convert('2.78', 'mN*µm^2', 'daN*mm^2')
->>> Decimal('2.78E+10')
+>>> converts('78 min', 'h')
+>>> '1.3'
+>>>
+>>> converts('52°C', '°F')
+>>> '125.6'
+>>>
+>>> converts('120 km*h^-1', 'mile*h^-1')
+>>> '74.56454306848007635409210214'
+
+
 
 Note: It is necessary to provide the value as a string. Indeed, the high precision of conversion (1E-27) is possible only with string, by using Decimal object in replacement of float object.
 
@@ -65,9 +73,20 @@ Release History
 
 - Added support for combined units like '**kg*m*s^-2**'
 
-0.2.1 (2018-01-15)
+1.0.0 (2018-01-16)
 ==================
 
 **Improvements**
+
 - Big code refactoring
 - Added handy functions convert and converts (return a string)
+
+1.1.0 (2018-01-16)
+==================
+
+**Improvements**
+
+- Add handling french format number 78,6 instead of 78.6
+
+**Tests**
+- Check if all prefix + unit are unique
